@@ -14,7 +14,7 @@ using ProgressMeter, Suppressor
         :n0 => [0., 1.],
         :K => [20, 50, 100, 500, 1e10],
         :dist => "uniform",
-        :N => 10,
+        :N => 100,
         :seed => 1
     );
 

@@ -1,22 +1,7 @@
-# sublinear-stability
+Lines of research that should blend nicely in one argument, with consistent notation, scaling, etc:
 
-This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
-to make a reproducible scientific project named
-> sublinear-stability
+- Generalized Lotka-Volterra model, phase diagrams: Bunin 2017: Ecological communities with Lotka-Volterra dynamics
+- May-type arguments: see eg Stone 2018: The feasibility and stability of large complex biological networks: a random matrix approach
+- Spin glasses and replicas: Biroli, Altieri PRL; see also this recent paper by Urbani (https://arxiv.org/pdf/2203.01899.pdf)
 
-It is authored by Matteo Smerlak.
-
-To (locally) reproduce this project, do the following:
-
-0. Download this code base. Notice that raw data are typically not included in the
-   git-history and may need to be downloaded independently.
-1. Open a Julia console and do:
-   ```
-   julia> using Pkg
-   julia> Pkg.add("DrWatson") # install globally, for using `quickactivate`
-   julia> Pkg.activate("path/to/this/project")
-   julia> Pkg.instantiate()
-   ```
-
-This will install all necessary packages for you to be able to run the scripts and
-everything should work out of the box, including correctly finding local paths.
+Can we say something about secondary exctinction, eg repeat Emary, Evans 2021 (Can a complex ecosystem survive the loss of a large fraction of its species? A random matrix theory of secondary extinction)

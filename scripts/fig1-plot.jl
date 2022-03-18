@@ -4,11 +4,11 @@ foreach(include, glob("*.jl", srcdir()))
 
 using DataFrames, StatsPlots, DataFramesMeta, LaTeXStrings
 
-
 df = collect_results(datadir("fig1"))
-sort!(df, :S)
+
 
 X = @subset(df, :n0 .== 1.)
+sort!(X, :S)
 plot(dpi = 500, title = "with threshold")
 for K in [20, 50, 100, 500]
     @df @subset(X, (:k .== 1) .& (:K .== K)) plot!(
@@ -38,6 +38,7 @@ savefig(plotsdir("fig1-threshold.png"))
 
 
 X = @subset(df, :n0 .== 0.)
+sort!(X, :S)
 plot(dpi = 500, title = "without threshold")
 for K in [20, 50, 100, 500]
     @df @subset(X, (:k .== 1) .& (:K .== K)) plot!(

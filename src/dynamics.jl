@@ -39,6 +39,9 @@ end
 ## solving
 
 MAX_TIME = 10_000
+
+invasion() = DiscreteCallback((u, t, integrator) -> Ω(u) < .05, terminate!)
+
 function evolve!(p)
 
     pb = ODEProblem(
@@ -52,11 +55,11 @@ function evolve!(p)
         )
 
     sol = solve(pb, 
-        callback = CallbackSet(TerminateSteadyState(1e-3)), 
+        callback = CallbackSet(TerminateSteadyState(1e-3), invasion()), 
         save_on = false
         )
-    p[:converged] = sol.retcode
-    p[:richness] = mean(sol.u[end] .> 1e-3)
+    p[:converged] = (sol.retcode == :Terminated && Ω(sol.u[end]) > .05)
+    p[:richness] = mean(sol.u[end] .> p[:n0])
     p[:diversity] = Ω(sol.u[end])
 end
 
@@ -87,7 +90,7 @@ function stats!(p)
     for i in 1:p[:N]
         random_interactions!(p)
         evolve!(p)
-        stability[i] = p[:converged] == :Terminated
+        stability[i] = p[:converged]
         richness[i] = p[:richness]
         diversity[i] = p[:diversity]
     end

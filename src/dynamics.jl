@@ -3,8 +3,10 @@ using Random, Distributions
 using LinearAlgebra
 
 function F(x, p)
+    # the vector field
     f = .- x.^2/p[:K]^(2 - p[:k]) .- x.*(p[:a]*x)
 
+    # no growth at low densities, below n0
     above_threshold = x .> p[:n0]
     f[above_threshold] .+= x[above_threshold].^p[:k]
     return f
@@ -18,6 +20,7 @@ function F!(f, x, p)
 end
 
 function J(x, p)
+    # J = F'
     j = - x.*p[:a]
     j[diagind(j)] .= .- 2x./p[:K]^(2 - p[:k]) .- a*x
 
@@ -46,17 +49,17 @@ function evolve!(p)
 
     pb = ODEProblem(
         ODEFunction(
-            (f, x, p, t) -> F!(f, x, p);
-            jac = (j, x, p, t) -> J!(j, x, p)
+            (f, x, p, t) -> F!(f, x, p); #in-place F faster
+            jac = (j, x, p, t) -> J!(j, x, p) #specify jacobian speeds things up
             ),
-            fill(5., p[:S]),
+            fill(5., p[:S]), #initial condition
             (0., MAX_TIME),
             p
         )
 
     sol = solve(pb, 
         callback = CallbackSet(TerminateSteadyState(1e-3), invasion()), 
-        save_on = false
+        save_on = false #don't save whole trajectory, only endpoint
         )
     p[:converged] = (sol.retcode == :Terminated && Ω(sol.u[end]) > .05)
     p[:richness] = mean(sol.u[end] .> p[:n0])
@@ -64,7 +67,7 @@ function evolve!(p)
 end
 
 function random_interactions!(p)
-
+    # add a random interaction matrix to p, the dict of parameters
     (m, s) = p[:scaled] ? (p[:μ]/p[:S], p[:σ]/sqrt(p[:S])) : (p[:μ], p[:σ])
 
     if p[:dist] == "normal"
@@ -74,13 +77,14 @@ function random_interactions!(p)
     end
 
     a = rand(p[:rng], dist, (p[:S], p[:S]))
-    a[diagind(a)] .= 0.
+    a[diagind(a)] .= 0. #self-regulation is not part of interaction matrix
 
     p[:a] = a
 end
 
 
 function stats!(p)
+    # run N simulates and append results to p
     p[:rng] = MersenneTwister(p[:seed])
 
     stability = Vector{Bool}(undef, p[:N])

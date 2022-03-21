@@ -71,7 +71,7 @@ function random_interactions!(p)
     (m, s) = p[:scaled] ? (p[:μ]/p[:S], p[:σ]/sqrt(p[:S])) : (p[:μ], p[:σ])
 
     if p[:dist] == "normal"
-        dist = Normal(m - s, m + s)
+        dist = Normal(m, s)
     elseif p[:dist] == "uniform"
         dist = Uniform(min(0., m - s), max(2m, m + s))
     end

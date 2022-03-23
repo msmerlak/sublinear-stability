@@ -7,14 +7,14 @@ using ProgressMeter, Suppressor
 @suppress_err begin 
     P = Dict{Symbol, Any}(
         :scaled => false,
-        :S => 5:5:150,
-        :μ => 5e-3,
+        :S => 10:100:310,
+        :μ => 1e-2,
         :σ => 1e-4,
         :k => [.75, 1.],
         :n0 => [0., 1.],
         :K => [20, 50, 100, 500, 1e10],
         :dist => "uniform",
-        :N => 100,
+        :N => 10,
         :seed => 1
     );
 
@@ -24,4 +24,3 @@ using ProgressMeter, Suppressor
         tagsave(datadir("fig1", name), p)
     end
 end
-

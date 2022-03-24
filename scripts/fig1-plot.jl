@@ -7,7 +7,7 @@ using DataFrames, StatsPlots, DataFramesMeta, LaTeXStrings
 df = collect_results(datadir("fig1"))
 
 
-X = @subset(df, :n0 .== 1.)
+X = @subset(df, (:n0 .== 1.))
 sort!(X, :S)
 plot(dpi = 500, title = "with threshold")
 for K in [20, 50, 100, 500]

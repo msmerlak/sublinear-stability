@@ -1,3 +1,5 @@
+ppart(x) = max(x, 0)
+
 
 function offdiag(A::AbstractMatrix)
     [A[ι] for ι in CartesianIndices(A) if ι[1] ≠ ι[2]]
@@ -39,4 +41,14 @@ end
 
 function Ω(c::Vector)
     return exp(-sum(xlogx.(c./norm(c, 1))))/length(c)
+end
+
+function uniquetol(A; kws...)
+    S = []
+    for a in A
+         if !any(s -> isapprox(s, a; kws...), S)
+             push!(S, a)
+         end
+    end
+    return S
 end

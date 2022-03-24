@@ -1,20 +1,32 @@
 ### This is a sketch, needs updating
 
 
+function spectrum(p)
+    @assert p[:converged]
+    return eigen(J(p[:equilibrium], p)).values
+end
+
+
 T(x, y, n, p) = (q = (p[:μ]-1/p[:K]^(2-p[:k])); 
             sum( 
                 n.^2 ./ ((x .- q*n .- (p[:k] - 1).*n.^(p[:k] - 1)).^2 .+ y^2)
             )
             )
 
+
+
 function boundary(p)
-    a = interaction_matrix(p)
-    n = equilibrium(p, a)
-    println(n)
-    if all(n .> p[:cutoff])
-        s = spectrum(p, a)
+
+    if !haskey(p, :a) random_interactions!(p) end
+    if !haskey(p, :equilibrium) evolve!(p) end
+    s = spectrum(p)
+
+
+    n = p[:equilibrium]
+    if all(n .> p[:n0]) && p[:converged]
+        s = spectrum(p)
         
-        s = s[real.(s) .> .99*minimum(real.(s))]
+        #s = s[real.(s) .> .99*minimum(real.(s))]
         # println(T(0, 0, n, p) - 1/(p[:σ])^2)
         # println( p[:S]/((1-p[:k])p[:μ]p[:S])^2 - 1/(p[:σ])^2 )
         X = range(minimum(real.(s)), maximum(real.(s)); length = 200)
@@ -32,3 +44,4 @@ function boundary(p)
     # vline!([- (1-p[:k])maximum(a*n)], color = "green")
     # vline!([- (1-p[:k])minimum(a*n)], color = "green")
 end
+

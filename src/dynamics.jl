@@ -13,6 +13,7 @@ function F(x, p)
 end
 
 function F!(f, x, p)
+    x .= ppart.(x)
     f .= .- x.^2/p[:K]^(2 - p[:k]) .- x.*(p[:a]*x)
 
     above_threshold = x .> p[:n0]
@@ -22,7 +23,7 @@ end
 function J(x, p)
     # J = F'
     j = - x.*p[:a]
-    j[diagind(j)] .= .- 2x./p[:K]^(2 - p[:k]) .- a*x
+    j[diagind(j)] .= .- 2x./p[:K]^(2 - p[:k]) .- p[:a]*x
 
     above_threshold = x .> p[:n0]
     j[diagind(j)[above_threshold]] .+= p[:k].*x[above_threshold].^(p[:k]-1)
@@ -43,9 +44,13 @@ end
 
 MAX_TIME = 10_000
 
-invasion() = DiscreteCallback((u, t, integrator) -> Ω(u) < .05, terminate!)
+blowup() = DiscreteCallback((u, t, integrator) -> maximum(u) > 1e5, terminate!)
 
-function evolve!(p)
+function evolve!(p; trajectory = false)
+
+
+    if !haskey(p, :a) random_interactions!(p) end
+
 
     pb = ODEProblem(
         ODEFunction(
@@ -58,22 +63,60 @@ function evolve!(p)
         )
 
     sol = solve(pb, 
-        callback = CallbackSet(TerminateSteadyState(1e-3), invasion()), 
-        save_on = false #don't save whole trajectory, only endpoint
+        callback = CallbackSet(TerminateSteadyState(1e-3), blowup()), 
+        save_on = trajectory #don't save whole trajectory, only endpoint
         )
     p[:converged] = (sol.retcode == :Terminated && Ω(sol.u[end]) > .05)
+    p[:equilibrium] = sol.u[end]
     p[:richness] = mean(sol.u[end] .> p[:n0])
     p[:diversity] = Ω(sol.u[end])
+
+    if trajectory
+        p[:trajectory] = sol
+    end
+
 end
 
+function equilibria!(p)
+    p[:rng] = MersenneTwister(p[:seed])
+    random_interactions!(p)
+
+    equilibria = []
+    sizehint!(equilibria, p[:N])
+
+    for _ in 1:p[:N]
+        pb = ODEProblem(
+            ODEFunction(
+                (f, x, p, t) -> F!(f, x, p); #in-place F faster
+                jac = (j, x, p, t) -> J!(j, x, p) #specify jacobian speeds things up
+                ),
+                rand(Uniform(2, 10), p[:S]), #initial condition
+                (0., MAX_TIME),
+                p
+            )
+
+        sol = solve(pb, 
+            callback = CallbackSet(TerminateSteadyState(1e-5), invasion()), 
+            save_on = false #don't save whole trajectory, only endpoint
+            )
+        push!(equilibria, sol.u[end])
+    end
+    p[:equilibria] = uniquetol(equilibria, atol = 1e-2)
+    p[:num_equilibria] = length(p[:equilibria])
+    p[:num_interior_equilibria] = sum(map(x-> all(x .> p[:n0]), p[:equilibria]))
+end
+
+
+
 function random_interactions!(p)
+    p[:rng] = MersenneTwister(p[:seed])
     # add a random interaction matrix to p, the dict of parameters
     (m, s) = p[:scaled] ? (p[:μ]/p[:S], p[:σ]/sqrt(p[:S])) : (p[:μ], p[:σ])
 
     if p[:dist] == "normal"
         dist = Normal(m, s)
     elseif p[:dist] == "uniform"
-        dist = Uniform(min(0., m - s), max(2m, m + s))
+        dist = Uniform(max(0., m - s), min(2m, m + s))
     end
 
     a = rand(p[:rng], dist, (p[:S], p[:S]))
@@ -99,7 +142,6 @@ function stats!(p)
         diversity[i] = p[:diversity]
     end
     delete!(p, :converged)
-    delete!(p, :equilibrium)
     delete!(p, :rng)
 
     p[:prob_stab] = mean(stability)

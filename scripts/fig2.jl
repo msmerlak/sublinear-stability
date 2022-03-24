@@ -19,17 +19,6 @@ P = Dict{Symbol, Any}(
 );
 
 
-# Threads.@threads for p in expand(P)
-#     if p[:μ] > p[:σ]
-#         name = savename(p, "jld2")
-#         if !isfile(name)
-#             stats!(p)
-#             wsave(datadir("fig2", name), p)
-#         end
-#     end
-# end
-
-
 Threads.@threads for p in expand(P)
     name = savename(p, "jld2")
     if !isfile(name)
@@ -40,3 +29,12 @@ end
 
 
 
+using DataFrames, StatsPlots, DataFramesMeta, LaTeXStrings
+df = collect_results(datadir("fig2"))
+
+@df df scatter(
+    :μ * 50,
+    :σ,
+    marker_z = :richness,
+    xlabel = "μ"
+)

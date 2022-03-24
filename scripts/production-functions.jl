@@ -7,10 +7,10 @@ using Plots
 using LaTeXStrings
 
 K=100
-plot(
+plot(dpi = 500)
+plot!(
     x -> (x - x^2/K)/((1-1/K)x),
     xlims = (0, K),
-    dpi = 500,
     xlabel = "Population density " * L"n",
     ylabel = "Per-capita productivity " * L"g(n)/n",
     label = "logistic",
@@ -24,6 +24,6 @@ plot!(
     label = "sublinear",
     linewidth = 2
 )
-vline!([1])
+vline!([1], label = false)
 
 savefig(plotsdir("productivity.pdf"))

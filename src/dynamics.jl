@@ -109,7 +109,6 @@ end
 
 
 function random_interactions!(p)
-    p[:rng] = MersenneTwister(p[:seed])
     # add a random interaction matrix to p, the dict of parameters
     (m, s) = p[:scaled] ? (p[:μ]/p[:S], p[:σ]/sqrt(p[:S])) : (p[:μ], p[:σ])
 
@@ -126,15 +125,15 @@ function random_interactions!(p)
 end
 
 
-function stats!(p)
+function stability!(p)
     # run N simulates and append results to p
-    p[:rng] = MersenneTwister(p[:seed])
 
+    p[:rng] = MersenneTwister(p[:seed])
     stability = Vector{Bool}(undef, p[:N])
     richness = Vector{Float64}(undef, p[:N])
     diversity = Vector{Float64}(undef, p[:N])
 
-    for i in 1:p[:N]
+    Threads.@threads for i in 1:p[:N]
         random_interactions!(p)
         evolve!(p)
         stability[i] = p[:converged]

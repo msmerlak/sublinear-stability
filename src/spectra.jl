@@ -23,20 +23,20 @@ function boundary(p)
 
 
     n = p[:equilibrium]
-    if all(n .> p[:n0]) && p[:converged]
+    if p[:converged] #&& all(n .> p[:n0]) 
         s = spectrum(p)
         
-        #s = s[real.(s) .> .99*minimum(real.(s))]
+        s = s[real.(s) .> .8*minimum(real.(s))]
         # println(T(0, 0, n, p) - 1/(p[:σ])^2)
         # println( p[:S]/((1-p[:k])p[:μ]p[:S])^2 - 1/(p[:σ])^2 )
-        X = range(minimum(real.(s)), maximum(real.(s)); length = 200)
-        Y = range(1.1*minimum(imag.(s)), 1.1*maximum(imag.(s)); length =  200)
+        X = range(minimum(real.(s)), maximum(real.(s)); length = 100)
+        Y = range(1.1*minimum(imag.(s)), 1.1*maximum(imag.(s)); length =  100)
 
-        scatter(s, alpha = .3, legend = false, dpi = 500,
+        scatter!(s, alpha = .3, legend = false,
         aspect_ratio = 1)
 
         Plots.contour!(X, Y, (x,y) -> T(x, y, n, p), levels = [1/(p[:σ])^2],
-        linewidth = 2)
+        linewidth = 2, color = :auto, colorbar = false)
     else
         print("The system is not feasible")
     end
@@ -44,4 +44,3 @@ function boundary(p)
     # vline!([- (1-p[:k])maximum(a*n)], color = "green")
     # vline!([- (1-p[:k])minimum(a*n)], color = "green")
 end
-

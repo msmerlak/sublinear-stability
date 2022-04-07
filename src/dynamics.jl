@@ -2,22 +2,22 @@ using DifferentialEquations
 using Random, Distributions
 using LinearAlgebra
 
-function F(x, p)
-    # the vector field
-    f = .- x.^2/p[:K]^(2 - p[:k]) .- x.*(p[:a]*x) .+ p[:λ]
+# function F(x, p)
+#     # the vector field
+#     f = .- x.^2/p[:K]^(2 - p[:k]) .- x.*(p[:a]*x) .+ p[:λ]
 
-    above_threshold = x .> p[:n0]
-    f[above_threshold] .+= p[:r][above_threshold].*x[above_threshold].^p[:k]
-    return f
-end
+#     above_threshold = x .> p[:n0]
+#     f[above_threshold] .+= p[:r][above_threshold].*x[above_threshold].^p[:k]
+#     return f
+# end
 
-function F!(f, x, p)
-    x .= ppart.(x)
-    f .= .- x.^2/p[:K]^(2 - p[:k]) .- x.*(p[:a]*x) .+ p[:λ]
+# function F!(f, x, p)
+#     x .= ppart.(x)
+#     f .= .- x.^2/p[:K]^(2 - p[:k]) .- x.*(p[:a]*x) .+ p[:λ]
 
-    above_threshold = x .> p[:n0]
-    f[above_threshold] .+= p[:r][above_threshold].*x[above_threshold].^p[:k]
-end
+#     above_threshold = x .> p[:n0]
+#     f[above_threshold] .+= p[:r][above_threshold].*x[above_threshold].^p[:k]
+# end
 
 function production(x, p)
         return (x > p[:n0] ? x^p[:k]*p[:n0]^(1-p[:k]) : x) - x^2/p[:K]

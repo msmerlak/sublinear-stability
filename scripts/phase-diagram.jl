@@ -18,12 +18,12 @@ end
 P = Dict{Symbol, Any}(
         :scaled => true,
         :S => 100,
-        :μ => .1:.2:9,
-        :σ => 0.1:.05:.6,
+        :μ => .1:.2:15,
+        :σ => 0.1:.05:1.,
         :k => .75,
-        :n0 => 1e-5,
+        :n0 => 1e-8,
         :λ => 0.,
-        :K => 1e6,
+        :K => 1,
         :dist => "normal",
         #:dist_r => Uniform(1,2),
         :N => 50,
@@ -40,7 +40,7 @@ sublinear = heatmap(
     dpi = 500,
     xlabel = L"\mu = N\,\textrm{mean}(A_{ij})",
     ylabel = L"\sigma = \sqrt{N}\,\textrm{sd}(A_{ij})",
-    title = "equilibrium diversity"
+    title = "equilibrium diversity, S = $(P[:S]), K = $(P[:K]), $(P[:symm] ? "symmetric" : "non-symmetric")"
 )
 
 plot!(

@@ -2,28 +2,41 @@ using DrWatson
 @quickactivate
 
 include(srcdir("constants.jl"))
-
+using UnPack
 using Plots
 using LaTeXStrings
 
+
 K=100
+
+p = Dict{Symbol, Any}(
+        :k => .75,
+        :n0 => 1.,
+        :K => 1e6
+    );
+
+
 plot(dpi = 500)
-plot!(
-    x -> (x - x^2/K)/((1-1/K)x),
+
+p[:k] = 1.
+p[:K] = 100
+plot(
+    x -> production(x, p)/x,
     xlims = (0, K),
-    xlabel = "Population density " * L"n",
-    ylabel = "Per-capita productivity " * L"g(n)/n",
+    color = COLOR_LOG,
     label = "logistic",
-    ylims = (1e-2,1),
     linewidth = 2
 )
+
+p[:k] = .75
+p[:K] = 1e6
 plot!(
-    x -> x^.75/x,
+    x -> g(x, p)/x,
     xlims = (0, K),
     color = COLOR_SUB,
     label = "sublinear",
     linewidth = 2
 )
-vline!([1], label = false)
+vline!([p[:n0]], label = false)
 
 savefig(plotsdir("productivity.pdf"))

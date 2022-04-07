@@ -24,16 +24,16 @@ function F(f, p; n_min = 1e-2, n_max = 100, quadrature = gausshermite(3))
     N(z) = quadgk(n -> n*m(n, z), n_min, n_max)[1]
     N2(z) = quadgk(n -> n^2*m(n, z), n_min, n_max)[1]
 
-    I1(z) = (1/sqrt(2π))*N2(z)/Z(z)
-    I2(z) = (1/sqrt(2π))*(N(z)/Z(z))^2
-    I3(z) = (1/sqrt(2π))*N(z)/Z(z)
+    I1(z) = N2(z)/Z(z)
+    I2(z) = (N(z)/Z(z))^2
+    I3(z) = N(z)/Z(z)
 
     # qd, q0, h = F
-    return [dot(w, Ik.(x)) for Ik in (I1, I2, I3)]
+    return (1/sqrt(2π))*[dot(w, Ik.(x)) for Ik in (I1, I2, I3)]
 end
 
 
-function F!(F, f, p; n_min = 1e-2, n_max = Inf, quadrature = gausshermite(3))
+function F!(F, f, p; n_min = 1e-2, n_max = 100, quadrature = gausshermite(3))
     @unpack  ρ, μ, σ, β, V, λ = p
     x, w = quadrature
 
@@ -54,9 +54,9 @@ function F!(F, f, p; n_min = 1e-2, n_max = Inf, quadrature = gausshermite(3))
 end
 
 
-function find_fp(p; n_min = 1e-3, n_max = 100, quadrature = gausshermite(3))
+function find_fp(p; kwargs...)
     @unpack  ρ, σ, β = p
-    fp = fixedpoint((F, f) -> F!(F, f, p), 1e-2*[1., .5, 1.]; method = :anderson)
+    fp = fixedpoint((F, f) -> F!(F, f, p; kwargs...), [2., 1., 1.]; method = :anderson)
     qd, q0, h = fp.zero
     @assert qd >= q0 "ouch"
     return (qd, q0, h)
@@ -74,7 +74,7 @@ p = (
 )
 
 F(
-    [0.41742, 0.35669, 0.58943],
+    [0.41742, 0.35669, 0.58943], # (qd, q0, h)
     p;
     n_min = 0, n_max = 100, quadrature = gausshermite(5)    
 )

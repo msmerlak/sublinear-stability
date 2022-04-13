@@ -4,10 +4,10 @@ using LinearAlgebra
 
 
 function production(x, p)
-        return (x > p[:n0] ? x^p[:k]*p[:n0]^(1-p[:k]) : x) - x^2/p[:K]
+        return (x > p[:n0] ? x^p[:k] : 0) - x^2/p[:K]
 end
 function dproduction(x, p)
-    return (x > p[:n0] ? p[:k]*x^(p[:k]-1)*p[:n0]^(1-p[:k]) : 1) - 2x/p[:K]
+    return (x > p[:n0] ? p[:k]*x^(p[:k]-1) : 0) - 2x/p[:K]
 end
 
 function F!(f, x, p)

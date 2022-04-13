@@ -19,6 +19,9 @@ function boundary(p)
 
     if !haskey(p, :a) random_interactions!(p) end
     if !haskey(p, :equilibrium) evolve!(p) end
+    if p[:scaled] p[:σ] = p[:σ]/sqrt(p[:S]) end
+    if p[:scaled] p[:μ] = p[:μ]/p[:S] end
+
     s = spectrum(p)
 
 

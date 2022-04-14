@@ -65,8 +65,8 @@ function evolve!(p; trajectory = false)
         )
     p[:converged] = (sol.retcode == :Terminated && Ω(sol.u[end]) > .05)
     p[:equilibrium] = sol.retcode == :Terminated ? sol.u[end] : NaN
-    p[:diversity] = Ω(sol.u[end])
     p[:richness] = sum(sol.u[end] .> p[:n0])
+    p[:diversity] = p[:richness] == 0 ? 0 : Ω(sol.u[end].*(sol.u[end] .> p[:n0]))
 
     if trajectory
         p[:trajectory] = sol

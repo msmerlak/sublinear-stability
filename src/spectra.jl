@@ -32,8 +32,8 @@ function boundary(p; overprint = false)
         s = s[real.(s) .> .8*minimum(real.(s))]
         # println(T(0, 0, n, p) - 1/(p[:σ])^2)
         # println( p[:S]/((1-p[:k])p[:μ]p[:S])^2 - 1/(p[:σ])^2 )
-        X = range(minimum(real.(s)), maximum(real.(s)); length = 100)
-        Y = range(minimum(imag.(s)), maximum(imag.(s)); length =  100)
+        X = range(1.1*minimum(real.(s)), .9*maximum(real.(s)); length = 100)
+        Y = range(1.1*minimum(imag.(s)), 1.1*maximum(imag.(s)); length =  100)
 
         if overprint
             scatter!(s, alpha = .3, legend = false,

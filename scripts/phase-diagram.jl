@@ -7,7 +7,7 @@ using Plots, LaTeXStrings
 
 ## scaled
 
-function critical_line(μ, k, K, S)
+function critical_line_approx(μ, k, K, S)
     if k == 1.
         return (1/K - μ)
     elseif k < 1.
@@ -44,7 +44,7 @@ sublinear = heatmap(
 )
 
 plot!(
-    μ -> critical_line(μ, P[:k], P[:K], P[:S]), 
+    μ -> critical_line_approx(μ, P[:k], P[:K], P[:S]), 
     ylims = (minimum(P[:σ]), maximum(P[:σ])), 
     linewidth = 2,
     color = "blue"
@@ -68,7 +68,7 @@ plot(sublinear, aa)
 
 ## unscaled
 
-function critical_line(μ, k, K, S)
+function critical_line_approx(μ, k, K, S)
     if k == 1.
         return (1/K - μ)/sqrt(S)
     elseif k < 1.
@@ -108,7 +108,7 @@ for S in [10, 20, 30]
         size = (800, 300)
     )
     plot!(
-        μ -> critical_line(μ, P[:k], P[:K], P[:S]), 
+        μ -> critical_line_approx(μ, P[:k], P[:K], P[:S]), 
         ylims = (minimum(P[:σ]), maximum(P[:σ])), 
         linewidth = 2,
         color = "blue"
@@ -128,7 +128,7 @@ for S in [10, 20, 30]
         size = (800, 300)
     )
     plot!(
-        μ -> critical_line(μ, P[:k], P[:K], P[:S]), 
+        μ -> critical_line_approx(μ, P[:k], P[:K], P[:S]), 
         ylims = (minimum(P[:σ]), maximum(P[:σ])), 
         linewidth = 2,
         color = "blue"

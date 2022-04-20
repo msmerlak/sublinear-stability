@@ -5,31 +5,54 @@ foreach(include, glob("*.jl", srcdir()))
 using ProgressMeter, Suppressor, ThreadsX
 using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes
 
-
-## scaled
-
-function critical_line_approx(μ, k, K, S)
-    if k == 1.
-        return (1/K - μ)
-    elseif k < 1.
-        return μ*(1-k-(2-k)/S)
-    end
-end
-
 P = Dict{Symbol, Any}(
         :scaled => true,
-        :S => 50,
-        :μ => .1:.1:1.,
-        :σ => .01:.01:.1,
+        :S => 100,
+        :μ => .1:.1:1.2,
+        :σ => .01:.01:.12,
         :k => .75,
         :n0 => 1e-8,
         :λ => 0,
         :K => 1e6,
         :dist => "normal",
-        #:dist_r => Uniform(.1,1),
-        :N => 1,
+        #:dist_r => Uniform(.01,1),
+        :N => 10,
         :symm => false,
     );
+
+
+# full coexistence
+
+ϕ = ThreadsX.collect(full_coexistence(p) for p in expand(P));
+sublinear = heatmap(
+    P[:μ], 
+    P[:σ],
+    reshape(ϕ, length(P[:μ]), length(P[:σ]))',
+    clims = (0,1),
+    legend = :none,
+    dpi = 500,
+    alpha = 1.,
+    c = palette([:white, COLOR_SUB49], 100),
+    grid = false,
+    xlabel = L"\mu = N\,\textrm{mean}(A_{ij})",
+    ylabel = L"\sigma = \sqrt{N}\,\textrm{sd}(A_{ij})",
+    title = "probability of stability, S = $(P[:S]), n₀= $(P[:n0]), $(P[:symm] ? "symm" : "non-symm")"
+)
+
+vline!(P[:σ], [1],
+color = :black, 
+linewidth=2,
+linestyle = :dash)
+
+plot!(
+    μ -> critical_line_approx(μ, P[:k], P[:K], P[:S]), 
+    ylims = (minimum(P[:σ]), maximum(P[:σ])), 
+    linewidth = 2,
+    color = "blue"
+    )
+
+
+# diversity
 
 ϕ = ThreadsX.collect(diversity(p) for p in expand(P));
 sublinear = heatmap(
@@ -46,19 +69,7 @@ sublinear = heatmap(
     ylabel = L"\sigma = \sqrt{N}\,\textrm{sd}(A_{ij})",
     title = "equilibrium diversity, S = $(P[:S]), K = $(P[:K]), $(P[:symm] ? "symmetric" : "non-symmetric")"
 )
-vline!(P[:σ], [1],
-color = :black, 
-linewidth=2,
-linestyle = :dash)
 
-savefig("prova-pd-no-threshold.svg")
-
-plot!(
-    μ -> critical_line_approx(μ, P[:k], P[:K], P[:S]), 
-    ylims = (minimum(P[:σ]), maximum(P[:σ])), 
-    linewidth = 2,
-    color = "blue"
-    )
 
 a = ThreadsX.collect(ahmadian(p) for p in expand(P));
 aa = heatmap(
@@ -75,6 +86,15 @@ aa = heatmap(
 
 plot(sublinear, aa)
 
+## scaled
+
+function critical_line_approx(μ, k, K, S)
+    if k == 1.
+        return (1/K - μ)
+    elseif k < 1.
+        return μ*(1-k-(2-k)/S)
+    end
+end
 
 ## unscaled
 

@@ -3,7 +3,8 @@ using DrWatson, Glob
 foreach(include, glob("*.jl", srcdir()))
 
 using ProgressMeter, Suppressor, ThreadsX
-using Plots, LaTeXStrings
+using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes
+
 
 ## scaled
 
@@ -17,17 +18,17 @@ end
 
 P = Dict{Symbol, Any}(
         :scaled => true,
-        :S => 100,
-        :μ => .1:.2:15,
-        :σ => 0.1:.05:1.,
+        :S => 50,
+        :μ => .1:.1:1.,
+        :σ => .01:.01:.1,
         :k => .75,
         :n0 => 1e-8,
-        :λ => 0.,
-        :K => 1,
+        :λ => 0,
+        :K => 1e6,
         :dist => "normal",
-        #:dist_r => Uniform(1,2),
-        :N => 50,
-        :symm => true
+        #:dist_r => Uniform(.1,1),
+        :N => 1,
+        :symm => false,
     );
 
 ϕ = ThreadsX.collect(diversity(p) for p in expand(P));
@@ -38,10 +39,19 @@ sublinear = heatmap(
     clims = (0,1),
     legend = :none,
     dpi = 500,
+    alpha = 1.,
+    c = palette([:white, COLOR_SUB49], 100),
+    grid = false,
     xlabel = L"\mu = N\,\textrm{mean}(A_{ij})",
     ylabel = L"\sigma = \sqrt{N}\,\textrm{sd}(A_{ij})",
     title = "equilibrium diversity, S = $(P[:S]), K = $(P[:K]), $(P[:symm] ? "symmetric" : "non-symmetric")"
 )
+vline!(P[:σ], [1],
+color = :black, 
+linewidth=2,
+linestyle = :dash)
+
+savefig("prova-pd-no-threshold.svg")
 
 plot!(
     μ -> critical_line_approx(μ, P[:k], P[:K], P[:S]), 

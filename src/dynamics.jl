@@ -63,8 +63,8 @@ function evolve!(p; trajectory = false)
         callback = CallbackSet(TerminateSteadyState(1e-3), blowup()), 
         save_on = trajectory #don't save whole trajectory, only endpoint
         )
-    p[:converged] = (sol.retcode == :Terminated && Ω(sol.u[end]) > .05)
     p[:equilibrium] = sol.retcode == :Terminated ? sol.u[end] : NaN
+    p[:converged] = (sol.retcode == :Terminated && maximum(p[:equilibrium]) < MAX_ABUNDANCE)
     p[:richness] = sum(sol.u[end] .> p[:n0])
     p[:diversity] = p[:richness] == 0 ? 0 : Ω(sol.u[end].*(sol.u[end] .> p[:n0]))
 
@@ -188,6 +188,22 @@ function diversity(p)
     end
 
     return mean(diversity)
+end
+
+function full_coexistence(p)
+    # run N simulates and append results to p
+    full_coexistence = Vector{Float64}(undef, p[:N])
+    p[:rng] = MersenneTwister()
+
+    for i in 1:p[:N]
+        add_interactions!(p)
+        add_growth_rates!(p)
+        add_initial_condition!(p)
+        evolve!(p)
+        full_coexistence[i] = p[:converged] && p[:richness]==p[:S] ? 1 : 0
+    end
+
+    return mean(full_coexistence)
 end
 
 function ahmadian(p)

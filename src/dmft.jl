@@ -116,3 +116,37 @@ function critical_line(p;
     end
     return μ_range, σc_line
 end
+
+#=
+# extinction μ Returns μ_ext(σ), e1(μ_ext,σ), e1(μ_ext,σ)
+function μ_ext(p;
+    Iter = 2000, #number of iteration
+    a = .01, #relax parameter for fixed point
+    tol = 1e-9, #requested tolerance for numerical integrator
+    n_max = (p[:μ]/p[:S]/(1-p[:k]))^(1/(p[:k]-2)) - 1e-5, #μ and α dependent upper cutoff for Ahmadian formula 
+    n_min = p[:n0], #lower bound for integration
+    e1_init = (p[:scaled] ? 1/p[:μ] : 1/p[:μ]/p[:S]), #initial guess for e1_n
+    e2_init = (p[:scaled] ? 1/p[:μ] : 1/p[:μ]/p[:S]), #initial guess for e1_n
+    μ_init = (p[:scaled] ? p[:r] : p[:r]/p[:S]), #initial guess for μ_ext
+    )
+
+    e1_n = e1_init*ones(Iter+1)
+    e2_n = e2_init*ones(Iter+1) 
+    μex = μ_init*ones(Iter+1) 
+
+    for i in 1:Iter
+        p[:μ] = μex[i]
+        e1_new = first(quadgk(x -> x*P_n(x, e1_n[i], e2_n[i], p) , n_min, n_max, rtol=tol))
+        e2_new = first(quadgk(x -> x*x*P_n(x, e1_n[i], e2_n[i], p) , n_min, n_max, rtol=tol))
+        
+        f!(F,x) = F[1] = (x[1]*e1_n[i]/p[:r])^(1/(p[:k]-1))*(1+(sqrt(2-p[:k])*x[1]*sqrt(e2_n[i])*p[:r]/(sqrt(2)*(p[:k]-1)*p[:σ]*e1_n[i]))^2)-e1_n[i]
+        μex_new = nlsolve(f!,[μex[i]]).zero[1]
+
+        e1_n[i+1] = (1-a)*e1_n[i] + a*e1_new
+        e2_n[i+1] = (1-a)*e2_n[i] + a*e2_new
+        μex[i+1] = (1-a)*μex[i] + a*μex_new
+    end
+    μex_eq, e1_n_eq, e2_n_eq = μex[Iter], e1_n[Iter], e2_n[Iter]
+    return (μex_eq, e1_n_eq, e2_n_eq)
+end
+=#

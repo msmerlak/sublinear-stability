@@ -1,5 +1,6 @@
-
 using Pkg
+Pkg.add("DrWatson")
+
 Pkg.instantiate()
 
 using DrWatson
@@ -31,10 +32,11 @@ P = Dict{Symbol, Any}(
 
 ϕ = ThreadsX.collect(full_coexistence(p) for p in expand(P));
 
-open("papers/onofrio/fig/prob-stability-S_$(P[:S])-N_$(P[:N])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ]).txt", "w") do io
+open("papers/onofrio/fig/prova.txt", "w") do io
     writedlm(io, ϕ)
 end
 
+#prob-stability-S_$(P[:S])-N_$(P[:N])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])
 
 # sublinear = heatmap(
 #     P[:μ], 

@@ -8,15 +8,15 @@ using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes
 P = Dict{Symbol, Any}(
         :scaled => true,
         :S => 100,
-        :μ => .1:.1:1.2,
-        :σ => .01:.01:.12,
+        :μ => .1:.1:1.,
+        :σ => .01:.01:.1,
         :k => .75,
         :n0 => 1e-8,
         :λ => 0,
         :K => 1e6,
         :dist => "normal",
         #:dist_r => Uniform(.01,1),
-        :N => 10,
+        :N => 5,
         :symm => false,
     );
 
@@ -24,6 +24,12 @@ P = Dict{Symbol, Any}(
 # full coexistence
 
 ϕ = ThreadsX.collect(full_coexistence(p) for p in expand(P));
+
+open("papers/onofrio/fig/prob-stability-S_$(P[:S])-N_$(P[:N])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ]).txt", "w") do io
+    writedlm(io, ϕ)
+end
+
+
 sublinear = heatmap(
     P[:μ], 
     P[:σ],
@@ -34,9 +40,9 @@ sublinear = heatmap(
     alpha = 1.,
     c = palette([:white, COLOR_SUB49], 100),
     grid = false,
-    xlabel = L"\mu = N\,\textrm{mean}(A_{ij})",
-    ylabel = L"\sigma = \sqrt{N}\,\textrm{sd}(A_{ij})",
-    title = "probability of stability, S = $(P[:S]), n₀= $(P[:n0]), $(P[:symm] ? "symm" : "non-symm")"
+    xlabel = L"\mu = S\,\textrm{mean}(A_{ij})",
+    ylabel = L"\sigma = \sqrt{S}\,\textrm{sd}(A_{ij})",
+    title = L"\textrm{Probability \,\, of \,\, stability}"
 )
 
 vline!(P[:σ], [1],
@@ -202,3 +208,5 @@ xlabel = L"\mu = N\,\textrm{mean}(A_{ij})",
 ylabel = L"\sigma = \sqrt{N}\,\textrm{sd}(A_{ij})",
 title = "equilibrium diversity"
 )
+
+=#

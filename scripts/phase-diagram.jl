@@ -16,27 +16,25 @@ using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes
 P = Dict{Symbol, Any}(
         :scaled => true,
         :S => 100,
-        :μ => .1:.1:1.,
-        :σ => .01:.01:.1,
+        :μ => .001:.001:1.2,
+        :σ => .0001:.0001:.12,
         :k => .75,
         :n0 => 1e-8,
         :λ => 0,
         :K => 1e6,
         :dist => "normal",
         #:dist_r => Uniform(.01,1),
-        :N => 5,
+        :N => 50,
         :symm => false,
     );
 
 # full coexistence
 
 ϕ = ThreadsX.collect(full_coexistence(p) for p in expand(P));
-
-open("papers/onofrio/fig/prova.txt", "w") do io
-    writedlm(io, ϕ)
+a = reshape(ϕ, length(P[:μ]), length(P[:σ]))
+open("../papers/onofrio/fig/prob-stability-S_$(P[:S])-N_$(P[:N])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ]).txt", "w") do io
+    writedlm(io, a)
 end
-
-#prob-stability-S_$(P[:S])-N_$(P[:N])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])
 
 # sublinear = heatmap(
 #     P[:μ], 

@@ -9,4 +9,4 @@
 #SBATCH --mail-type=ALL
 
 
-julia phase-diagram.jl > phase-diagram.log
+julia stability-vs-diversity.jl > stability-vs-diversity.log

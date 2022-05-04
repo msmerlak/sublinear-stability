@@ -28,25 +28,17 @@ P = Dict{Symbol, Any}(
         :K => 1e6,
         :dist => "normal",
         #:dist_r => Uniform(.01,1),
-        :N => 100,
+        :N => 1e4,
         :symm => false,
     );
 
-R=100
-meta_ϕ = Matrix{Float64}(undef, R, length(P[:S]))
-for r in 1:R
-    ϕ = []
-    for p in expand(P) 
-        append!(ϕ, full_coexistence(p))
-    end
-    meta_ϕ[r, :] = ϕ
+ϕ = []
+for p in expand(P) 
+    append!(ϕ, full_coexistence(p))
 end
 
-mean_ϕ = vec(mean(meta_ϕ, dims=1))
-std_ϕ = vec(std(meta_ϕ, dims=1))
-
-open("../papers/onofrio/fig/stab-vs-div-N_$(P[:N])-R_$R-S_$(P[:S])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])-k_$(P[:k])-K_$(P[:K]).txt", "w") do io
-    writedlm(io, [mean_ϕ std_ϕ], ',')
+open("../papers/onofrio/fig/SUB-stab-vs-div-N_$(P[:N])-S_$(P[:S])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])-k_$(P[:k])-K_$(P[:K]).txt", "w") do io
+    writedlm(io, [P[:S] ϕ], ',')
 end 
 
 
@@ -64,30 +56,41 @@ P = Dict{Symbol, Any}(
         :K => 20,
         :dist => "normal",
         #:dist_r => Uniform(.01,1),
-        :N => 100,
+        :N => 1e4,
         :symm => false,
     );
 
-R=100
-meta_ϕ = Matrix{Float64}(undef, R, length(P[:S]))
-for r in 1:R
-    ϕ = []
-    for p in expand(P) 
-        append!(ϕ, full_coexistence(p))
-    end
-    meta_ϕ[r, :] = ϕ
+ϕ = []
+for p in expand(P) 
+    append!(ϕ, full_coexistence(p))
 end
 
-mean_ϕ = vec(mean(meta_ϕ, dims=1))
-std_ϕ = vec(std(meta_ϕ, dims=1))
-
-open("../papers/onofrio/fig/stab-vs-div-N_$(P[:N])-R_$R-S_$(P[:S])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])-k_$(P[:k])-K_$(P[:K]).txt", "w") do io
-    writedlm(io, [mean_ϕ std_ϕ], ',')
+open("../papers/onofrio/fig/LOG-stab-vs-div-N_$(P[:N])-S_$(P[:S])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])-k_$(P[:k])-K_$(P[:K]).txt", "w") do io
+    writedlm(io, [P[:S] ϕ], ',')
 end
-
 
 
 #=
+a = readdlm("papers/onofrio/fig/stab-vs-div-N_100-R_100-S_2:2:100-n₀_1.0e-8-σ_0.005-μ_0.01-k_0.75-K_1.0e6.txt", ',')
+b = readdlm("papers/onofrio/fig/stab-vs-div-N_100-R_100-S_2:2:100-n₀_1.0e-8-σ_0.005-μ_0.01-k_1.0-K_20.txt", ',')
+
+plot(P[:S], b[:,1], 
+ribbon=b[:,2],
+c=COLOR_LOG49,
+linewidth = 2,
+grid = false,
+label = "Logistic",
+legend = :right,
+)
+plot!(P[:S], a[:,1], 
+ribbon=a[:,2],
+c=COLOR_SUB49,
+linewidth = 2,
+grid = false,
+label = "Sublinear",
+legend = :right,
+)
+
 plot!(P[:S], mean_ϕ, ribbon=std_ϕ,
 c=COLOR_LOG49,
 linewidth = 2,

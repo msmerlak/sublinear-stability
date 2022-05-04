@@ -28,14 +28,11 @@ P = Dict{Symbol, Any}(
         :K => 1e6,
         :dist => "normal",
         #:dist_r => Uniform(.01,1),
-        :N => 1e4,
+        :N => 50,
         :symm => false,
     );
 
-ϕ = []
-for p in expand(P) 
-    append!(ϕ, full_coexistence(p))
-end
+ϕ = ThreadsX.collect(full_coexistence(p) for p in expand(P));
 
 open("../papers/onofrio/fig/SUB-stab-vs-div-N_$(P[:N])-S_$(P[:S])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])-k_$(P[:k])-K_$(P[:K]).txt", "w") do io
     writedlm(io, [P[:S] ϕ], ',')
@@ -60,10 +57,7 @@ P = Dict{Symbol, Any}(
         :symm => false,
     );
 
-ϕ = []
-for p in expand(P) 
-    append!(ϕ, full_coexistence(p))
-end
+ϕ = ThreadsX.collect(full_coexistence(p) for p in expand(P));
 
 open("../papers/onofrio/fig/LOG-stab-vs-div-N_$(P[:N])-S_$(P[:S])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])-k_$(P[:k])-K_$(P[:K]).txt", "w") do io
     writedlm(io, [P[:S] ϕ], ',')

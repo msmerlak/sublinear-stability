@@ -26,6 +26,18 @@ function P_n(n, e1_n, e2_n, p)
     end
 end
 
+# Expression for abundance distribution for uniform interaction and lognormal r
+function P_n_log(p)
+    μᵣ = p[:dist_r].μ
+    σᵣ = p[:dist_r].σ
+    μ = p[:scaled] ? p[:μ] : p[:μ]*p[:S]
+    k = p[:k]
+
+    e1 = exp((2*(1-k)*(μᵣ-log(μ))+σᵣ^2)/(2*(1-k)^2*(2-k)/(1-k)))
+
+    return LogNormal((μᵣ-log(μ*e1))/(1-k), σᵣ/(1-k))
+end
+
 # DMFT calculation for first two moments of the equilibrium distribution given μ and σ.
 function DMFT_eq(p;
     Iter = 2000, #number of iteration

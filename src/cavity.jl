@@ -155,6 +155,61 @@ function σ_crit(p;
     return (σc_eq, ϕ_n_eq, e1_n_eq, e2_n_eq)
 end
 
+# Regularized critical σ. Returns σ_cirit(μ), e1(μ,σ_crit), e1(μ,σ_crit)
+function σ_crit_reg(p;
+    Iter = 2000, #number of iteration
+    rela = .01, #relax parameter for fixed point
+    tol = 1e-9, #requested tolerance for numerical integrator
+    e1_init = (p[:scaled] ? 1/p[:μ] : 1/p[:μ]/p[:S]), #initial guess for e1_n
+    e2_init = (p[:scaled] ? 1/p[:μ] : 1/p[:μ]/p[:S]), #initial guess for e1_n
+    σc_init = (p[:scaled] ? .1*p[:μ] : .1*p[:μ]/p[:S]), #initial guess for σ_c
+    n_max = 5e3, #upper bound for integration
+    n_min = p[:n0], #lower bound for integration
+    )
+
+    if !p[:scaled]  #singularity in ahmadian formula
+        n_s = haskey(p, :r) ? (p[:μ]/(1-p[:k])/p[:r])^(1/(p[:k]-2)) : (p[:μ]/(1-p[:k]))^(1/(p[:k]-2))
+    else
+        n_s = haskey(p, :r) ? (p[:μ]/p[:S]/(1-p[:k])/p[:r])^(1/(p[:k]-2)) : (p[:μ]/p[:S]/(1-p[:k]))^(1/(p[:k]-2))
+    end 
+
+    ϕ_n = ones(Iter+1) 
+    e1_n = e1_init*ones(Iter+1)
+    e2_n = e2_init*ones(Iter+1) 
+    σc = σc_init*ones(Iter+1) 
+    
+    for i in 1:Iter
+        p[:σ] = σc[i]
+        ϕ_new = first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p) , n_min, n_max, rtol=tol))
+        e1_new = first(quadgk(x -> x*P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i] , n_min, n_max, rtol=tol))
+        e2_new = first(quadgk(x -> x*x*P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i] , n_min, n_max, rtol=tol))
+        σc_new = ((first(quadgk(x -> (ψ_reg(n_s+x, e1_n[i], e2_n[i], p, n_s)+
+                 ψ_reg(n_s-x, e1_n[i], e2_n[i], p, n_s)-2*ψ_reg(n_s, e1_n[i], e2_n[i], p, n_s))/ϕ_n[i]/x , n_min, n_s, rtol=tol))+
+                 (first(quadgk(x -> (ψ_reg(x, e1_n[i], e2_n[i], p, n_s)-
+                 2*ψ_reg(n_s, e1_n[i], e2_n[i], p, n_s))/ϕ_n[i]/(x-n_s)^2 , 2*n_s, n_max, rtol=tol))))/p[:S])^(-1/2)
+        
+        ϕ_n[i+1] = (1-rela)*ϕ_n[i] + rela*ϕ_new
+        e1_n[i+1] = (1-rela)*e1_n[i] + rela*e1_new
+        e2_n[i+1] = (1-rela)*e2_n[i] + rela*e2_new
+        σc[i+1] = (1-rela)*σc[i] + rela*σc_new
+    end
+    σc_eq, ϕ_n_eq, e1_n_eq, e2_n_eq = σc[Iter], ϕ_n[Iter], e1_n[Iter], e2_n[Iter]
+    return (σc_eq, ϕ_n_eq, e1_n_eq, e2_n_eq)
+end
+
+function ψ_reg(n, e1_n, e2_n, p, n_s)
+    r = haskey(p, :r) ? p[:r] : 1
+    @unpack μ, σ, k, S = p
+    P=(1-k)*n^(k-2)/(sqrt(2*π*σ^2*e2_n/r^2))*
+    exp(-(n^(k-1)-μ*e1_n/r)^2/(2*σ^2*e2_n/r^2))
+    if n == n_s
+        return P*n_s^(2*(3-k))/r^2/(1-k)^2/(k-2)/(k-8)
+    else
+        return P*(n-n_s)^2/(1-k)^2/r^2/(n^(k-2)-n_s^(k-2))^2
+    end
+end
+
+
 # critical line in μ - σ space
 function critical_line(p;
     μ_range = (.005:.005:.1),

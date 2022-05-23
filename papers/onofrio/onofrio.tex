@@ -85,7 +85,12 @@ where the sum runs from $j=1$ to $j=S$ and the off-diagonal elements
 of $A$ are extracted from a distribution
 with mean $\mu>0$ and standard deviation $\sigma$ while $A_{ii}=1/K$, $\forall i$,
 $K$ being the (uniform) carrying capacity.
-(To be more precise $K^{1/(\beta+\gamma-\alpha)}$ is the carrying capacity).
+To be more precise $K^{1/(\beta+\gamma-\alpha)}$ is the carrying capacity and for
+dimensional consistency we could study instead, e.g., the
+population density normalized over a density threshold $\tilde{n}_{i}$,
+$x_i=(n_i/\tilde{n}_i)$. We consider,
+without loss of generality for the results that follows, $\tilde{n}_i = 1$ $\forall i$
+and stick with the notation $n_i$.
 If the equilibrium is feasible it formally reads
 \begin{equation}
     (n_i^*)^{\alpha-\beta} = \sum_{j}A_{ij}(n_j^*)^{\gamma} \, .
@@ -100,8 +105,8 @@ while the diagonal components read
     - (\beta+\gamma)A_{ii}n_i^{\beta+\gamma} \, .
 \end{equation}
 
-\subsection{Uniform case}
-In the case of uniform interactions ($\sigma=0$)
+\subsection{Dynamic May / anti-May bound, uniform interaction limit}
+In the case of uniform interactions ($\sigma\to0$)
 the species population are all equal and the equilibrium reads
 \begin{equation}
     n^*=\left[\mu(S-1)+\frac{1}{K}\right]^{1/(\alpha-\beta-\gamma)} \, .
@@ -152,11 +157,10 @@ A series of comments is in order.
     and not the form of the contribution of the competitors to the interactions.
     \item The critical case ($\beta/\alpha=1$) not only recovers the usual GLV result
     but \textit{generalize it}, indeed it does not depend on $\gamma$ which cancels out.
-    \item For $K\to\infty$ and $\beta=1$ we recover the result
+    \item For $K\to\infty$ and $\beta=1=\gamma$ we recover the result
     \begin{equation}
-        S=1+\frac{1}{1-\alpha} \, ,
+        S=1+\frac{1}{1-\alpha} \, .
     \end{equation}
-    once again \textit{independently} on $\gamma$.
 \end{itemize}
 
 Being the specification of $\gamma$ 
@@ -165,9 +169,87 @@ models with $\gamma=\beta$,
 leaving the potential asymmetry of the competitive interaction between two species
 to the coefficient $A_{ij}$.
 
-\subsection{Non-uniform case}
+One can therefore identify two different regimes (we could dub them \textit{May} and \textit{anti-May})
+characterized by the dynamical response of the population with respect to their density
+encoded in the exponents $\alpha$ and $\beta$, resepctively associated
+to production and losses. The GLV case $\alpha=\beta$ is right in the middle for uniform
+interactions ($\sigma\to0$) and falls into the May regime otherwise ($\sigma\neq0$). 
+
+\section{Cavity solution}
+In order to better relate to the data from observations let us consider
+the dynamics of the biomass densities $b_i$ for $S$ species.
+The dynamics is completely described by
+\begin{equation}
+    \frac{d b_i}{dt} = r_ib_i\left(\frac{b_i}{\tilde{b}}\right)^{\alpha -1} - b_i\sum_{j\neq i}A_{ij}b_j \, ,
+    \label{eq: full system}
+\end{equation}
+where the entries of the interaction matrix $A_{ij}$ have the dimensions of inverse time times inverse
+mass and are randomly distributed with average $\mu$ and standard deviation $\sigma$,
+the $r_i$ are growth rates with the dimensions of inverse time extracted from a distribution
+$P(r)$ and the biomass density scale
+$\tilde{b}$ is assumed, due to physiological and ecological arguments,
+to be a species independent constant.
+
+\textcolor{red}{Cavity trick}
+
+The cavity solution is the random variable $b^*$ given by
+\begin{equation}
+    b^* = \left(\frac{\mu S \langle b^* \rangle + \sigma \sqrt{S} \eta}
+    {r \tilde{b}^{1-\alpha}}\right)^{1/(\alpha-1)} \, ,
+\end{equation}
+where represent $\langle b^*\rangle$ is the equilibrium average biomass density
+and $\eta$ have zero mean and variance $\langle (b^*)^2\rangle$.
+The equilibrium probability distribution function for $b^*$, $P(b^*)$,
+can be obtained through the pushforward of the distribution of $\eta$ and $r$
+\begin{equation}
+    P(b^*)=\frac{(1-\alpha)|b^*|^{\alpha-2}}{\sqrt{2\pi \sigma^2 S\langle (b^*)^2 \rangle}}
+    \int_0^{\infty}dr \ r P(r)
+    \exp{\left\{-\frac{\left[(b^*)^{\alpha-1}-\mu S\langle b^*\rangle/r\right]^2}{2\sigma^2S\langle (b^*)^2 \rangle/r^2}\right\}} \, ,
+\end{equation}
+where we set without loss of generality $\tilde{b}=1$ and the fraction
+of survival species $\phi$ and the first two moment
+have to be self-consistently computed
+\begin{align}
+    \phi&= \int_0^{\infty}db^* \ P(b^*)\, , \\
+    \langle b^*\rangle&=\frac{1}{\phi}\int_0^{\infty}db^* \ b^*P(b^*) \, , \\
+    \langle (b^*)^2\rangle&=\frac{1}{\phi}\int_0^{\infty}db^* \ (b^*)^2 P(b^*) \, .
+\end{align}
+\textcolor{red}{Notice that the integrals for the first and the second moment have to be properly regularized,
+Their value is cut-off independent up to a certain value which the depend on the parameters and then
+diverges. If the value of density up to which they are cut-off independent is so big that is unphysical
+or unbiological then one can stop before and extract the values of the moments.
+See also, e.g., Ref.~\cite{Cui2020} for the analysis of a similar situation in the
+context of consumer-resource dynamics}
+
+In the case of a unique $r$ for every species in the community, i.e. $P(\tilde{r})=\delta(r-\tilde{r})$
+the distribution reads
+\begin{equation}
+    P(b^*)=\frac{(1-\alpha)|b^*|^{\alpha-2}}{\sqrt{2\pi \sigma^2 S\langle (b^*)^2 \rangle/r^2}}
+    \exp{\left\{-\frac{\left[(b^*)^{\alpha-1}-\mu S\langle b^*\rangle/r\right]^2}{2\sigma^2S\langle (b^*)^2 \rangle/r^2}\right\}} \, .
+    \label{eq: species dist unique r}
+\end{equation}
+
+\subsection{Dynamical mean field theory}
+In order to obtain information about the dynamics
+of the distributions of the biomass densities of the community,
+following, e.g., Ref.~\cite{Roy2019} we can derive
+from Eq.~(\ref{eq: full system}), for large $S$, 
+a dynamical mean field theory which provide us a stochastic differential
+equation describing statistically the entire ensemble of species
+thorug the evolution of the representtive random variable $b$
+\begin{equation}
+    \frac{d b}{dt} = rb\left(\frac{b}{\tilde{b}}\right)^{\alpha -1} -
+     b\left(\mu S \langle b \rangle_t + \sigma \sqrt{S} \eta_t \right)\, ,
+\label{eq: dmft}
+\end{equation}
+where $\langle b\rangle_t=\langle b(t)\rangle$ is the average at time $t$ of the random variable
+$b$ and $\eta$ is a gaussian variable
+with zero mean and correlation given by $\langle b(t)b(s)\rangle$; these first and
+second moment have to be computed self-consistently at each time. 
+At equilibrium the cavity solution is recovered.
 
 \section{On sublinear production}
+\label{sec: On sublinear production}
 Observations point towards a sublinear production scaling
 with respect to the population biomass density. 
 This observations may refer to
@@ -225,17 +307,6 @@ for $r$ and then substituting it in the defining Eq.~(\ref{eq: production})
 or simply by considering the dynamical equation at stationarity.
 Notice that, if $s$ is varied instead, the exponent
 of dynamical and across-biomass-gradient production coincide.
-Figure~\ref{fig. example} shows an example with specific parameters.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=.8\textwidth]{fig/single-pop.pdf}
-    \caption{Production versus biomass density in single population descirbed in
-    Eq.~(\ref{eq: single}) for $r\in[1,100]$,
-    $s=10$, $\alpha=1/2$ and $\beta=3/4$. In the inset the equilibration process
-    for $r=10$.}
-    \label{fig. example}
-\end{figure}
 
 In summary, for an environmental change that amount to a change in $r$, 
 the production across a biomass gradient 
@@ -250,12 +321,79 @@ have sublinear $P(n^*)$ we need $\alpha<1$ with $\alpha<\beta$ for stability
 but no constraint on $\beta$. Either way we need $\alpha<1$.
 
 \subsection{Competitive community}
+With the help of the cavity solution we can extend the analysis above
+to the case of a competitive community.
 
-Consider the $\alpha\beta\gamma$-model
+\section{Model construction and connection with data on productivity}
+Our model is informed by macroecological observations
+of biomass density production across major groups.
+In particular, we assume that the observations refers to the
+equilibrium production (see Sec.~(\ref{sec: On sublinear production})).
+We define our model in the following way
+\begin{equation}
+    \frac{d b_i}{dt} = \underbrace{r_ib_i\left(\frac{b_i}{\tilde{b}_i}\right)^{k -1}}_\text{Production}
+     - \overbrace{z_ib_i\sum_{j\neq i}A_{ij}b_j}^\text{Losses} \, ,
+\end{equation}
+where $\alpha<1$
+specify the intensity of sublinear dynamical scaling,
+the entries of the interaction matrix $A_{ij}$
+are randomly distributed with average $\mu$ and standard deviation $\sigma$,
+the $r_i$ are growth rates extracted from a distribution
+$P(r)$, the biomass density scale
+$\tilde{b}_i$ are in principle species dependent
+and we explicitely write a mortality rate $z_i$ in the losses whith the dimension
+of an inverse time. This is useful because we want to relate the characteristic time scale 
+of the dynamics a species (captured by
+the rates $r_i$ and $z_i$) to its mass which we call $m_i$.
+For the sake of clarity let us summarize the dimensionality of
+the several terms involved in the model
+\begin{equation}
+    [b_i] = [\tilde{b}_i] =  \frac{\textrm{mass}}{\textrm{area}} \ , \quad [r_i]=[z_i]=\frac{1}{\textrm{time}} \ , 
+    \quad [A_{ij}]=\frac{\textrm{area}}{\textrm{mass}} \ .
+\end{equation}
 
-\section{$(\sigma\sqrt{S},\mu S)$ plane}
+We want to encapsulate physiological properties in the
+rates $r_i$, $z_i$, and potentially $\tilde{b}_i$
+and the ecological variablity in the elements of
+the interaction matrix $A_{ij}$.
+The density biomass scale $\tilde{b}_i$ set the value at which the per capita
+growth rate is $r_i$. We also want to connect this quantity to the
+maximum per capita growth rate for a given species, we can therefore
+consider $\tilde{b}_i$ also as the minimal biomass density for a given species
+at which it is able to reproduce therefore we impose that there is no growth
+for $b_i<\tilde{b_i}$, but other choices of subminimal reproduction do not change
+qualitatively the result of the paper.
+Next we connect the model with the body-mass $m_i$ of a species. 
+The time scale of the problem are assumed/observed to scale with the body-mass
+with an exponent $-1/4$, i.e. $r_i\sim m_i^{-1/4}$ and $z_i\sim m_i^{-1/4}$.
+The population density scale
+for a given species is defined $\tilde{n}_i:=\tilde{b}_i/m_i$,
+Its inverse can be interpreted as the minimal area within which an individual
+of a certain species has to find another in order to be able to reproduce
+on average in its lifetime, if the area covered by an individual
+scales like $m_i$, then we can roughly consider $\tilde{b_i}\simeq\tilde{b}$ $\forall i$,
+i.e. species independent. We could also use an ecological argument
+to justify this, indeed the observed biomass densities across major group
+have a mass independent lower bound (within two or three order of magnitude compared
+with the astronomical difference of nearly 20 order of magnitude in body-mass).
 
 
+\section{Macroecological laws}
+Intro \dots
+
+\subsection{Species abundance distribution}
+
+\subsection{Mean-variance scaling}
+
+\subsection{Size-density scaling}
+
+\subsection{Size-spectrum scaling}
+
+\section{Stability in parameter space}
+
+\section{Simulations}
+
+\begin{comment} 
 \section{General production with GLV interactions}
 Consider the system of $S$ species
 \begin{equation}
@@ -276,10 +414,11 @@ We have instability when
 \begin{equation}
     \sum_i \frac{1}{|\mu -P(n_i^*)/(n_i^*)^2+P'(n_i^*)/n_i^*|^2}\geq 1/\sigma^2 \, .
 \end{equation}
+\end{comment}
 
 \newpage
 
-\bibliography{Bib/library.bib}
+\bibliography{library.bib}
 
 \bibliographystyle{unsrt}
 

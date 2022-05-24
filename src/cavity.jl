@@ -26,6 +26,17 @@ function P_n(n, e1_n, e2_n, p)
     end
 end
 
+# Expression for abundance with gaussian approximation
+function P_n_gauss(p)
+    @unpack μ, σ, k, S = p
+    μ = !p[:scaled] ? μ*S : μ
+    σ = !p[:scaled] ? σ*sqrt(S) : σ 
+    r = haskey(p, :r) ? first(p[:r]) : 1
+    e1 = (μ/r)^(1/(k-2))
+    e2 = e1^2/(1-(1/(k-1))^2*(μ*e1/r)^(2*(2-k)/(k-1))*σ^2)
+    return Normal(e1,sqrt(e2-e1^2))
+end
+
 # Expression for abundance distribution for uniform interaction and lognormal r
 function P_n_log(p)
     μᵣ = p[:dist_r].μ
@@ -123,9 +134,11 @@ function σ_crit(p;
             ϕ_new = first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p) , n_min, n_max, rtol=tol))
             e1_new = first(quadgk(x -> x*P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i] , n_min, n_max, rtol=tol))
             e2_new = first(quadgk(x -> x*x*P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i] , n_min, n_max, rtol=tol))
-            σc_new = ((first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i]/((1-p[:k])*x^(p[:k]-2)-p[:μ]/p[:S])^2 , n_min, n_s - ϵ, rtol=tol))+
-            first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i]/((1-p[:k])*x^(p[:k]-2)-p[:μ]/p[:S])^2 , n_s + ϵ, n_max, rtol=tol))-
-            2*P_n(n_s, e1_n[i], e2_n[i], p)/ϵ)/p[:S])^(-1/2)
+            σc_new = ((first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i]/((1-p[:k])*x^(p[:k]-2)-p[:μ]/p[:S])^2 ,
+            n_min, n_s - ϵ, rtol=tol)))/p[:S])^(-1/2)
+            #σc_new = ((first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i]/((1-p[:k])*x^(p[:k]-2)-p[:μ]/p[:S])^2 , n_min, n_s - ϵ, rtol=tol))+
+            #first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i]/((1-p[:k])*x^(p[:k]-2)-p[:μ]/p[:S])^2 , n_s + ϵ, n_max, rtol=tol))-
+            #2*P_n(n_s, e1_n[i], e2_n[i], p)/ϵ)/p[:S])^(-1/2)
             
             ϕ_n[i+1] = (1-rela)*ϕ_n[i] + rela*ϕ_new
             e1_n[i+1] = (1-rela)*e1_n[i] + rela*e1_new
@@ -153,6 +166,35 @@ function σ_crit(p;
     end
     σc_eq, ϕ_n_eq, e1_n_eq, e2_n_eq = σc[Iter], ϕ_n[Iter], e1_n[Iter], e2_n[Iter]
     return (σc_eq, ϕ_n_eq, e1_n_eq, e2_n_eq)
+end
+
+# Critical σ, variant with gaussian approximation
+function σ_crit_gauss(p;
+    Iter = 2000, #number of iteration
+    rela = .01, #relax parameter for fixed point
+    tol = 1e-9, #requested tolerance for numerical integrator
+    ϵ = 1e-2, #Hadamard small parametrs for partie finie
+    σc_init = (p[:scaled] ? .1*p[:μ] : .1*p[:μ]/p[:S]), #initial guess for σ_c
+    n_max = 1e3, #upper bound for integration
+    n_min = p[:n0], #lower bound for integration
+    )
+
+    if !p[:scaled]  #singularity in ahmadian formula
+        n_s = haskey(p, :r) ? (p[:μ]/(1-p[:k])/p[:r])^(1/(p[:k]-2)) : (p[:μ]/(1-p[:k]))^(1/(p[:k]-2))
+    else
+        n_s = haskey(p, :r) ? (p[:μ]/p[:S]/(1-p[:k])/p[:r])^(1/(p[:k]-2)) : (p[:μ]/p[:S]/(1-p[:k]))^(1/(p[:k]-2))
+    end 
+
+    σc = σc_init*ones(Iter+1)     
+    for i in 1:Iter
+        p[:σ] = σc[i]
+        σc_new = ((first(quadgk(x -> pdf(P_n_gauss(p),x)/((1-p[:k])*x^(p[:k]-2)-p[:μ]/p[:S])^2 ,
+         n_min, n_s - ϵ, rtol=tol)))/p[:S])^(-1/2)
+
+        σc[i+1] = (1-rela)*σc[i] + rela*σc_new
+    end
+    σc_eq = σc[Iter]
+    return σc_eq
 end
 
 # Regularized critical σ. Returns σ_cirit(μ), e1(μ,σ_crit), e1(μ,σ_crit)
@@ -221,4 +263,22 @@ function critical_line(p;
         @show σc_line
     end
     return μ_range, σc_line
+end
+
+# critical line in μ - σ space for gaussian approximation
+function critical_line_gauss(p;
+    μ_range = (.005:.005:.1),
+    )
+    σc_line = ones(length(μ_range)) 
+    for (i,μ) in enumerate(μ_range)
+        p[:μ] = μ
+        σc_line[i] = σ_crit_gauss(p)
+        @show σc_line
+    end
+    return μ_range, σc_line
+end
+
+# fraction of survival with gaussian approximation
+function gauss_approx_ϕ(p; n_max=1000)
+    return first(quadgk(x -> pdf(P_n_gauss(p),x) , p[:n0], n_max, rtol=1e-9))
 end

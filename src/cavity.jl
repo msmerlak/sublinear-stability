@@ -282,3 +282,22 @@ end
 function gauss_approx_ϕ(p; n_max=1000)
     return first(quadgk(x -> pdf(P_n_gauss(p),x) , p[:n0], n_max, rtol=1e-9))
 end
+
+# critical σ different approach
+function alternative_crit_σ(p;
+    μ_range = (.005:.005:.1),
+    )
+    σc_line = ones(length(μ_range)) 
+    for (i,μ) in enumerate(μ_range)
+        p[:μ] = μ
+        @unpack μ, k, S = p
+        μ = !p[:scaled] ? μ*S : μ
+        r = haskey(p, :r) ? first(p[:r]) : 1
+        e1 = (μ/r)^(1/(k-2))
+        function f!(F, x)
+            F[1] = 1/S-pdf(Normal(e1,sqrt(e1^2/(1-(1/(k-1))^2*(μ*e1/r)^(2*(2-k)/(k-1))*x[1]^2)-e1^2)), 0)
+        end
+        σc_line[i] = first(nlsolve(f!, [μ/10]).zero)
+    end
+    return μ_range, σc_line
+end

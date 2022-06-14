@@ -60,7 +60,7 @@ function evolve!(p; trajectory = false)
         )
 
     sol = solve(pb, 
-        callback = CallbackSet(TerminateSteadyState(1e-3), blowup()), 
+        callback = CallbackSet(TerminateSteadyState(1e-2), blowup()), 
         save_on = trajectory #don't save whole trajectory, only endpoint
         )
     p[:equilibrium] = sol.retcode == :Terminated ? sol.u[end] : NaN

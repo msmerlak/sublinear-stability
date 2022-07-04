@@ -28,13 +28,14 @@ end
 
 # Expression for abundance with gaussian approximation
 function P_n_gauss(p)
-    @unpack μ, σ, k, S = p
+    @unpack μ, σ, k, S, n0 = p
     μ = !p[:scaled] ? μ*S : μ
     σ = !p[:scaled] ? σ*sqrt(S) : σ 
     r = haskey(p, :r) ? first(p[:r]) : 1
     e1 = (μ/r)^(1/(k-2))
     e2 = e1^2/(1-(1/(k-1))^2*(μ*e1/r)^(2*(2-k)/(k-1))*σ^2)
-    return (e1, e2, Normal(e1,sqrt(e2-e1^2)))
+    ϕ = e2>0 ? (1+erf((e1-n0)/sqrt(2*(e2-e1^2))))/2 : 1
+    return (e1, e2>0 ? e2 : 0, ϕ, e2>0 ? Normal(e1,sqrt(e2-e1^2)) : Normal(e1,0))
 end
 
 # Expression for abundance mixed, complete solution with gaussian moments
@@ -56,7 +57,7 @@ function P_n_log(p)
     μ = p[:scaled] ? p[:μ] : p[:μ]*p[:S]
     k = p[:k]
 
-    e1 = exp((2*(1-k)*(μᵣ-log(μ))+σᵣ^2)/(2*(1-k)^2*(2-k)/(1-k)))
+    e1 = exp((2*(1-k)*(μᵣ-log(μ))+σᵣ^2)/(2*(1-k)*(2-k)))
 
     return LogNormal((μᵣ-log(μ*e1))/(1-k), σᵣ/(1-k))
 end

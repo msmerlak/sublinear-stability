@@ -37,8 +37,8 @@ end
 
 ## solving
 
-MAX_TIME = 10_000
-MAX_ABUNDANCE = 1e4
+MAX_TIME = 1e6
+MAX_ABUNDANCE = 1e5
 
 blowup() = DiscreteCallback((u, t, integrator) -> maximum(u) > MAX_ABUNDANCE, terminate!)
 
@@ -54,13 +54,13 @@ function evolve!(p; trajectory = false)
             (f, x, p, t) -> F!(f, x, p); #in-place F faster
             jac = (j, x, p, t) -> J!(j, x, p) #specify jacobian speeds things up
             ),
-            fill(5., p[:S]), #initial condition
+            fill(2., p[:S]), #initial condition
             (0., MAX_TIME),
             p
         )
 
     sol = solve(pb, 
-        callback = CallbackSet(TerminateSteadyState(1e-2), blowup()), 
+        callback = CallbackSet(TerminateSteadyState(1e-3), blowup()), 
         save_on = trajectory #don't save whole trajectory, only endpoint
         )
     p[:equilibrium] = sol.retcode == :Terminated ? sol.u[end] : NaN

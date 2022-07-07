@@ -11,7 +11,7 @@ function dproduction(x, p)
 end
 
 function F!(f, x, p)
-    f .= p[:r].*production.(ppart.(x), Ref(p)) .- x.*(p[:a]*x) .+ p[:λ]
+    f .= p[:r].*production.(ppart.(x), Ref(p)) .- p[:z]*x .- x.*(p[:a]*x) .+ p[:λ]
 end
 
 function J(x, p)

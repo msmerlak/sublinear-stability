@@ -1,0 +1,133 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage[margin = 3cm]{geometry}
+\usepackage[safeinputenc, maxnames=10, backend = biber, sorting=none, url = false, doi = false, isbn = false, citestyle = numeric-comp]{biblatex}
+\AtEveryBibitem{\clearlist{language}}
+\AtEveryBibitem{\clearfield{note}}
+\AtEveryBibitem{\clearfield{month}}
+\AtEveryBibitem{\clearfield{publisher}}
+\addbibresource{references.bib}
+\renewbibmacro{in:}{}
+\usepackage{colortbl}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+
+\newcommand{\inter}{\textrm{inter}}
+\newcommand{\intra}{\textrm{intra}}
+
+\title{Supplementary Material for ``Diversity begets stability: sublinear growth scaling and competitive coexistence across ecosystems''}
+
+\begin{document}
+\appendix
+
+\maketitle
+
+
+
+
+\section{Conditions for stable coexistence in competitive communities}
+
+Here we provide more details on the analytical results discussed in the main text. 
+
+\subsection{Homogeneous communities: stability criteria}
+
+
+Let us model the competition of $S$ species with abundances $x_i$ (either numerical density $N_i$ or biomass density $B_i$) in terms of \emph{per capita} growth rates  
+\begin{equation}
+\frac{1}{x_i}\frac{dx_i}{dt} = \inter_i(x_i) + \intra_i(\mathbf x_{-i}), \quad 1\leq i\leq S .
+\end{equation}
+Here $\inter_i$ represents intra-specific effects which only depend on the abundance of population $i$, and  $\intra_i$ represents inter-specific effects which only depend on the abundances of its competitors, collectively denoted $\mathbf x_{-i}\equiv (x_j)_{j \neq i}$. Because competition can only reduce the growth rate of a population, we assume that both terms are monotonically decreasing functions of their arguments. 
+
+Following standard terminology, we call the system feasible if it admits an equilibrium point $\mathbf x^*$ whose components $x_i$ are all positive. Further, an equilibrium point $\mathbf x^*$ is locally stable if all eigenvalues of the Jacobian of $f$ evaluated at $\mathbf x^*$ (aka the community matrix $C^*$) have negative real parts. 
+The community matrix has diagonal and off-diagonal elements 
+\begin{equation}
+    C^*_{ii} = x_i^*\, \frac{\partial \intra_i}{\partial x_i}(x_i^*), \quad C^*_{ij} = x_i^*\, \frac{\partial \inter_i}{\partial x_j}(x_{-i}^*),
+\end{equation}
+respectively. 
+
+Consider the case species are indistinguishable and interactions are uniform ($A_{ij} = A>0$). In that case all species have equal abundance $x^*$ at equilibrium, and moreover the eigenvalue $\lambda$ of the Jacobian $J^*$ with largest real part is given by
+\begin{equation}
+    \lambda = x^* \left(\frac{\partial \intra}{\partial x_i}(x^*) - \frac{\partial \inter}{\partial x_i}(x^*)\right). 
+\end{equation}
+From this expression derives a general rule of thumb concerning the stability of competitive communities: a multi-species equilibrium can only be stable if intra-specific regulation effect are more strongly density dependent than inter-specific competition effects. This rule is stated as Eq. (3) in the main text. 
+
+For the model introduced in the main text we have $\intra(x_i) = rg(x_i)$ (assuming a vanishing death rate $z = 0$) and $\inter(x_{-i}) = -\sum_{j\neq i}A_{ij} x_j$. We can therefore write the local stability condition as
+\begin{equation}
+    rg'(x^*) < - A \quad \textrm{(logistic)}.
+\end{equation}
+In the logistic case we have $g'(x^*) = -1/K$, hence stability requires $A < r/K$: inter-specific interactions must be weaker than intra-specific interactions. In the sublinear model, on the other hand, we have $g'(x^*) = (k-1)g(x^*)/x^*$, and using the equilibrium condition $rg(x^*) = (S-1)Ax^*$, we arrive at $(k-1)(S-1)A < - A$, i.e. 
+\begin{equation}
+    S > 1 + \frac{1}{1-k} \quad \textrm{(sublinear)}.
+\end{equation}
+This inequality shows that, at least in homogeneous communities, increasing diversity enhances the local stability of multi-species equilibria. 
+
+\subsection{Homogeneous communities: May vs. anti-May behavior}
+
+In this section we show that the GLV model lies on the boundary between two phases: one with May behavior (diversity begets instability), and one with anti-May behavior (diversity begets stability). To this aim we consider a variant of the competition model reading
+\begin{equation}
+    f_i(x) = x_i^k - \sum_{j = 1}^Sa_{ij}x_i^a x_j^b = x_i^k - A_{ii} x_i^{a+b}- \sum_{j \neq i}a_{ij}x_i^a x_j^b.
+\end{equation}
+In this formulation the GLV model corresponds to $k = a = b = 1$ and the sublinear model in the main text to $k < 1$ and $a = b = 1$. We compute the Jacobian matrix elements:
+\begin{eqnarray}
+    C_{ii} &=& kx_i^{k-1} - A_{ii} (a+b) x^{a+b-1} - a\sum_{j \neq i}A_{ij}x_i^{a-1} x_j^b, \\  
+    C_{ij} &=& -b\sum_{j \neq i}A_{ij}x_i^{a} x_j^{b-1}.
+\end{eqnarray}
+If we assume as before a homogenenous community with identical interaction strengths (denoted $A_{ii} = A_{\textrm{s}}$, $A_{ij} = A_{\textrm{c}}$), the equilibrium abundance reads
+\begin{equation}
+    x^* = [A_{\textrm{s}} + (S-1)A_{\textrm{c}}]^{1/(k-a-b)} 
+\end{equation}
+and the corresponding community matrix reads
+\begin{eqnarray}
+    C_{ii} &=& k(x^*)^{k-1} - [(a+b) A_{\textrm{s}} + a(S-1)A_{\textrm{c}}](x^*)^{a+b-1}, \\  
+    C_{ij} &=& -bA(x^*)^{a+b-1}.
+\end{eqnarray}
+The largest eigenvalue of $C^*$ is given by
+\begin{eqnarray}
+    \lambda &=& C^*_{ii} - C^*_{ij}\\
+     &=& k(x^*)^{k-1} - [(a+b)A_{\textrm{s}} +(a(S-1)-b)A_{\textrm{c}}](x^*)^{a+b-1}\\
+    & = & \left(k - \frac{(a+b)A_{\textrm{s}} +(a(S-1)-b)A_{\textrm{c}}}{A_{\textrm{s}} + (S-1)A_{\textrm{c}}}\right)(x^*)^{k-1}.
+\end{eqnarray}
+The local stability condition therefore reads
+\begin{equation}
+    (S-1)(k-a) > (a+b - k)\alpha - b \quad \textrm{with}\quad \alpha \equiv A_{\textrm{s}}/A_{\textrm{c}}. 
+\end{equation}
+We have three possibilities:
+\begin{eqnarray}
+    S &>& 1 + \frac{(a+b - k)\alpha - b}{k-a} \quad \textrm{if}\quad k < a\\
+    S &<& 1 + \frac{(a+b - k)\alpha - b}{k-a} \quad \textrm{if}\quad k > a\\
+    \alpha &>& 1 \quad \textrm{if}\quad k = a 
+\end{eqnarray}
+A series of comments are in order:
+\begin{itemize}
+    \item Depending on $k$ and $a$ we have two regimes: one in which increasing $S$ hinders stability ($k > a$, a `May' phase), and one in which increasing $S$ enhances stability ($k < a$, an `anti-May' phase). Notably this transition is independent from $b$, indicating that only the relative density dependence of self- and cross-regulation in the \emph{per capita} growth of a population is relevant, and not the form of the dependence on other species' abundance in this \emph{per capita} growth. 
+    \item The critical case ($k=a$) recovers the usual stability condition for the homogeneous GLV model ($b=1$) and generalizes it for general interactions ($b\neq 1$).
+    \item For $ A_{\textrm{s}}$ and $a = b = 1$ we recover the results obtained in the previous section, $S > 1 + 1/(1-k)$. 
+\end{itemize}
+
+These results are obtained in the special case where interactions are homogenous (standard deviation $\sigma = 0$). When $\sigma > 0$, the GLV model falls squarely into the May phase, as illustrated e.g. by Fig. 3A of the main text. 
+
+\subsection{Random communities: DMFT and cavity solution}
+
+Dynamical mean field theory (DMFT) and the cavity method have been used to study the GLV model in the large diversity limit ($S\to\infty$) by several authors [REFS]. Here we show how to derive the derive analytical results in the sublinear model using these techniques.
+
+Both the cavity method and DMFT starts from the observation that, in a complex community with a large number of species, the competition pressure felt by each population is dominated by a `mean field' representing the aggregate effect of all other species. 
+
+
+\subsection{Random communities: replica solution}
+
+\section{Linking dynamical theory with macroecological laws}
+
+\subsection{Production-biomass scaling}
+\subsection{Species abundance distribution}
+\subsection{Mean-variance scaling}
+\subsection{Size-density scaling}
+\subsection{Size spectra}
+
+\printbibliography
+\end{document}
+
+

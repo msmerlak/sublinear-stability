@@ -22,11 +22,11 @@ P = Dict{Symbol, Any}(
         :b0 => 1.,
         :λ => 0,
         :z => .1,
-        :K => 1e6,
+        :K => 1e10,
         :threshold => false,
-        :dist => "normal",
+        :dist => "gamma",
         #:dist_r => Uniform(.01,1),
-        :N => 3,
+        :N => 1,
         :symm => false,
     );
 
@@ -53,7 +53,7 @@ ylabel = L"\sigma \sqrt{S}",
 title = L"\textrm{Stability \,\, in \,\, parameter \,\, space}"
 )
 
-pippo = [x for x in .01:.005:1.2]
+pippo = [x for x in .1:.005:1.]
 plot!(pippo, -(1/8)*(pippo.^2 .- pippo.^(2+1/(3/4-2))),
 color = :black,
 linestyle = :solid,
@@ -67,7 +67,7 @@ color = :black,
 linestyle = :solid,
 linewidth = 4,
 alpha=.5,
-ylims = [0.001,0.06],
+ylims = [0.001,0.1],
 xlims = [.0,1]
 )
 

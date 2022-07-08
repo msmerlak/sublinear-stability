@@ -16,15 +16,17 @@ using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes
 P = Dict{Symbol, Any}(
         :scaled => true,
         :S => 100,
-        :μ => .001:.001:1.2,
-        :σ => .0001:.0001:.12,
+        :μ => .1:.1:1.,
+        :σ => .01:.01:.1,
         :k => .75,
-        :n0 => 1e-8,
+        :b0 => 1.,
         :λ => 0,
+        :z => .1,
         :K => 1e6,
+        :threshold => false,
         :dist => "normal",
         #:dist_r => Uniform(.01,1),
-        :N => 50,
+        :N => 3,
         :symm => false,
     );
 
@@ -36,25 +38,49 @@ open("../papers/onofrio/fig/prob-stability-S_$(P[:S])-N_$(P[:N])-n₀_$(P[:n0])-
     writedlm(io, a)
 end
 
-# sublinear = heatmap(
-#     P[:μ], 
-#     P[:σ],
-#     reshape(ϕ, length(P[:μ]), length(P[:σ]))',
-#     clims = (0,1),
-#     legend = :none,
-#     dpi = 500,
-#     alpha = 1.,
-#     c = palette([:white, COLOR_SUB49], 100),
-#     grid = false,
-#     xlabel = L"\mu = S\,\textrm{mean}(A_{ij})",
-#     ylabel = L"\sigma = \sqrt{S}\,\textrm{sd}(A_{ij})",
-#     title = L"\textrm{Probability \,\, of \,\, stability}"
-# )
+sublinear = heatmap(
+P[:μ], 
+P[:σ],
+reshape(ϕ, length(P[:μ]), length(P[:σ]))',
+clims = (0,1),
+legend = :none,
+dpi = 500,
+alpha = 1.,
+c = palette([:white, COLOR_SUB49], 100),
+grid = false,
+xlabel = L"\mu S",
+ylabel = L"\sigma \sqrt{S}",
+title = L"\textrm{Stability \,\, in \,\, parameter \,\, space}"
+)
 
-# vline!(P[:σ], [1],
-# color = :black, 
-# linewidth=2,
-# linestyle = :dash)
+pippo = [x for x in .01:.005:1.2]
+plot!(pippo, -(1/8)*(pippo.^2 .- pippo.^(2+1/(3/4-2))),
+color = :black,
+linestyle = :solid,
+linewidth = 4,
+alpha=1,
+ylims = [0.001,0.04],
+xlims = [.0,1]
+)
+plot!(pippo, -(1/4/2)*( .- pippo.^(2+1/(3/4-2))),
+color = :black,
+linestyle = :solid,
+linewidth = 4,
+alpha=.5,
+ylims = [0.001,0.06],
+xlims = [.0,1]
+)
+
+vline!(P[:σ], [1],
+color = :black, 
+alpha = .5,
+linewidth=2,
+linestyle = :dash)
+
+savefig("robustness-zero-mod.svg")
+
+pippazza = readdlm("./papers/onofrio/fig/prob-stability-zero-S_100-N_10-n₀_1-σ_0.001:0.001:0.06-μ_0.01:0.01:1.2.txt")
+pippa = readdlm("./papers/onofrio/fig/prob-stability-S_100-N_10-n₀_1.0e-8-σ_0.001:0.001:0.12-μ_0.01:0.01:1.2.txt")
 
 # plot!(
 #     μ -> critical_line_approx(μ, P[:k], P[:K], P[:S]), 
@@ -216,3 +242,4 @@ end
 # )
 
 # =#
+

@@ -4,40 +4,29 @@ using LinearAlgebra
 
 
 function production(x, p)
-        return (x > p[:n0] ? x^p[:k] : 0) - x^2/p[:K]
+        return (x > p[:b0]*p[:threshold] ? x^p[:k] : 0) - x^2/p[:K]
 end
 function dproduction(x, p)
-    return (x > p[:n0] ? p[:k]*x^(p[:k]-1) : 0) - 2x/p[:K]
+    return (x > p[:b0]*p[:threshold] ? p[:k]*x^(p[:k]-1) : 0) - 2x/p[:K]
 end
 
 function F!(f, x, p)
-    f .= p[:r].*production.(ppart.(x), Ref(p)) .- p[:z]*x .- x.*(p[:a]*x) .+ p[:λ]
-end
-
-function J(x, p)
-    # J = F'
-    j = - x.*p[:a]
-    j[diagind(j)] .= p[:r].*dproduction.(x, Ref(p)) .- p[:a]*x
-
-    # above_threshold = x .> p[:n0]
-    # j[diagind(j)[above_threshold]] .+= p[:k].*p[:r][above_threshold].*x[above_threshold].^(p[:k]-1)
-
-    return j
+    f .= p[:r]*p[:b0]^(1-p[:k]).*production.(ppart.(x), Ref(p)) .- p[:z]*x .- x.*(p[:a]*x) .+ p[:λ]
 end
 
 function J!(j, x, p)
     j = - x.*p[:a]
-    j[diagind(j)] .= p[:r].*dproduction.(x, Ref(p)) .- 2x./p[:K]^(2 - p[:k]) .- p[:a]*x
+    j[diagind(j)] .= p[:r]*p[:b0]^(1-p[:k]).*dproduction.(x, Ref(p)) .- 2x./p[:K]^(2 - p[:k]) .-p[:z] .- p[:a]*x
 
 
-    # above_threshold = x .> p[:n0]
+    # above_threshold = x .> p[:b0]
     # j[diagind(j)[above_threshold]] .+= p[:k].*p[:r][above_threshold].*x[above_threshold].^(p[:k]-1)
 end
 
 
 ## solving
 
-MAX_TIME = 1e6
+MAX_TIME = 1e3
 MAX_ABUNDANCE = 1e5
 
 blowup() = DiscreteCallback((u, t, integrator) -> maximum(u) > MAX_ABUNDANCE, terminate!)
@@ -65,8 +54,8 @@ function evolve!(p; trajectory = false)
         )
     p[:equilibrium] = sol.retcode == :Terminated ? sol.u[end] : NaN
     p[:converged] = (sol.retcode == :Terminated && maximum(p[:equilibrium]) < MAX_ABUNDANCE)
-    p[:richness] = sum(sol.u[end] .> p[:n0])
-    p[:diversity] = p[:richness] == 0 ? 0 : Ω(sol.u[end].*(sol.u[end] .> p[:n0]))
+    p[:richness] = sum(sol.u[end] .> p[:b0]*p[:threshold])
+    p[:diversity] = p[:richness] == 0 ? 0 : Ω(sol.u[end].*(sol.u[end] .> p[:b0]*p[:threshold]))
 
     if trajectory
         p[:trajectory] = sol
@@ -105,7 +94,7 @@ function equilibria!(p)
     end
     p[:equilibria] = uniquetol(equilibria, atol = .1)
     p[:num_equilibria] = length(p[:equilibria])
-    p[:num_interior_equilibria] = sum(map(x-> all(x .> p[:n0]), p[:equilibria]))
+    p[:num_interior_equilibria] = sum(map(x-> all(x .> p[:b0]*p[:threshold]), p[:equilibria]))
 
     return p[:num_equilibria]
 end

@@ -28,13 +28,13 @@ end
 
 # Expression for abundance with gaussian approximation
 function P_n_gauss(p)
-    @unpack μ, σ, k, S, n0 = p
+    @unpack μ, σ, k, S, b0 = p
     μ = !p[:scaled] ? μ*S : μ
     σ = !p[:scaled] ? σ*sqrt(S) : σ 
     r = haskey(p, :r) ? first(p[:r]) : 1
     e1 = (μ/r)^(1/(k-2))
     e2 = e1^2/(1-(1/(k-1))^2*(μ*e1/r)^(2*(2-k)/(k-1))*σ^2)
-    ϕ = e2>0 ? (1+erf((e1-n0)/sqrt(2*(e2-e1^2))))/2 : 1
+    ϕ = e2>0 ? (1+erf((e1-b0*p[:threshold])/sqrt(2*(e2-e1^2))))/2 : 1
     return (e1, e2>0 ? e2 : 0, ϕ, e2>0 ? Normal(e1,sqrt(e2-e1^2)) : Normal(e1,0))
 end
 
@@ -57,9 +57,9 @@ function P_n_log(p)
     μ = p[:scaled] ? p[:μ] : p[:μ]*p[:S]
     k = p[:k]
 
-    e1 = exp((2*(1-k)*(μᵣ-log(μ))+σᵣ^2)/(2*(1-k)*(2-k)))
+    e1 = exp((2*(1-k)*(μᵣ-log(μ/p[:b0]^(1-k)))+σᵣ^2)/(2*(1-k)*(2-k)))
 
-    return LogNormal((μᵣ-log(μ*e1))/(1-k), σᵣ/(1-k))
+    return LogNormal((μᵣ-log(μ*e1/p[:b0]^(1-k)))/(1-k), σᵣ/(1-k))
 end
 
 # Cavity calculation for fraction of survivals and first two moments of the equilibrium distribution given μ and σ.
@@ -68,7 +68,7 @@ function Cavity(p;
     rela = .01, #relax parameter for fixed point
     tol = 1e-9, #requested tolerance for numerical integrator
     n_max = 1e4, #upper bound for integration
-    n_min = p[:n0], #lower bound for integration
+    n_min = p[:b0]*p[:threshold], #lower bound for integration
     e1_init = (p[:scaled] ? 1/p[:μ] : 1/p[:μ]/p[:S]), #initial guess for e1_n
     e2_init = (p[:scaled] ? 1/p[:μ] : 1/p[:μ]/p[:S]) #initial guess for e1_n
     )
@@ -127,7 +127,7 @@ function σ_crit(p;
     σc_init = (p[:scaled] ? .1*p[:μ] : .1*p[:μ]/p[:S]), #initial guess for σ_c
     ϵ = 1e-5, #Hadamard small parametrs for partie finie
     n_max = 1e3, #upper bound for integration
-    n_min = p[:n0], #lower bound for integration
+    n_min = p[:b0]*p[:threshold], #lower bound for integration
     )
 
     if !p[:scaled]  #singularity in ahmadian formula
@@ -189,7 +189,7 @@ function σ_crit_gauss(p;
     ϵ = 1e-2, #Hadamard small parametrs for partie finie
     σc_init = (p[:scaled] ? .1*p[:μ] : .1*p[:μ]/p[:S]), #initial guess for σ_c
     n_max = 1e3, #upper bound for integration
-    n_min = p[:n0], #lower bound for integration
+    n_min = p[:b0]*p[:threshold], #lower bound for integration
     )
 
     if !p[:scaled]  #singularity in ahmadian formula
@@ -217,7 +217,7 @@ function σ_crit_mix(p;
     tol = 1e-9, #requested tolerance for numerical integrator
     ϵ = 1e-7, #Hadamard small parametrs for partie finie
     σc_init = (p[:scaled] ? .1*p[:μ] : .1*p[:μ]/p[:S]), #initial guess for σ_c
-    n_min = p[:n0], #lower bound for integration
+    n_min = p[:b0]*p[:threshold], #lower bound for integration
     )
 
     if !p[:scaled]  #singularity in ahmadian formula
@@ -247,7 +247,7 @@ function σ_crit_reg(p;
     e2_init = (p[:scaled] ? 1/p[:μ] : 1/p[:μ]/p[:S]), #initial guess for e1_n
     σc_init = (p[:scaled] ? .1*p[:μ] : .1*p[:μ]/p[:S]), #initial guess for σ_c
     n_max = 5e3, #upper bound for integration
-    n_min = p[:n0], #lower bound for integration
+    n_min = p[:b0]*p[:threshold], #lower bound for integration
     )
 
     if !p[:scaled]  #singularity in ahmadian formula
@@ -330,11 +330,6 @@ function critical_line_mix(p;
         @show σc_line
     end
     return μ_range, σc_line
-end
-
-# fraction of survival with gaussian approximation
-function gauss_approx_ϕ(p; n_max=1000)
-    return first(quadgk(x -> pdf(P_n_gauss(p),x) , p[:n0], n_max, rtol=1e-9))
 end
 
 # critical σ different approach

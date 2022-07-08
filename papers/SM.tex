@@ -45,17 +45,16 @@ Here $\inter_i$ represents intra-specific effects which only depend on the abund
 Following standard terminology, we call the system feasible if it admits an equilibrium point $\mathbf x^*$ whose components $x_i$ are all positive. Further, an equilibrium point $\mathbf x^*$ is locally stable if all eigenvalues of the Jacobian of $f$ evaluated at $\mathbf x^*$ (aka the community matrix $C^*$) have negative real parts. 
 The community matrix has diagonal and off-diagonal elements 
 \begin{equation}
-    C^*_{ii} = x_i^*\, \frac{\partial \intra_i}{\partial x_i}(x_i^*), \quad C^*_{ij} = x_i^*\, \frac{\partial \inter_i}{\partial x_j}(x_{-i}^*),
+    C^*_{ii} = x_i^*\, \frac{\partial \intra_i}{\partial x_i}(x_i^*), \quad C^*_{ij} = x_i^*\, \frac{\partial \inter_i}{\partial x_j}(x_{-i}^*).
 \end{equation}
-respectively. 
 
-Consider the case species are indistinguishable and interactions are uniform ($A_{ij} = A>0$). In that case all species have equal abundance $x^*$ at equilibrium, and moreover the eigenvalue $\lambda$ of the Jacobian $J^*$ with largest real part is given by
+Consider the case species are indistinguishable and interactions are uniform ($A_{ij} = A>0$ for $i\neq j$). In that case all species have equal abundance $x^*$ at equilibrium, and moreover the eigenvalue $\lambda$ of the Jacobian $J^*$ with largest real part is given by
 \begin{equation}
     \lambda = x^* \left(\frac{\partial \intra}{\partial x_i}(x^*) - \frac{\partial \inter}{\partial x_i}(x^*)\right). 
 \end{equation}
 From this expression derives a general rule of thumb concerning the stability of competitive communities: a multi-species equilibrium can only be stable if intra-specific regulation effect are more strongly density dependent than inter-specific competition effects. This rule is stated as Eq. (3) in the main text. 
 
-For the model introduced in the main text we have $\intra(x_i) = rg(x_i)$ (assuming a vanishing death rate $z = 0$) and $\inter(x_{-i}) = -\sum_{j\neq i}A_{ij} x_j$. We can therefore write the local stability condition as
+In the model introduced in the main text, we have $\intra(x_i) = rg(x_i)$ (assuming a vanishing death rate $z = 0$) and $\inter(x_{-i}) = -\sum_{j\neq i}A_{ij} x_j$. We can therefore write the local stability condition as
 \begin{equation}
     rg'(x^*) < - A \quad \textrm{(logistic)}.
 \end{equation}

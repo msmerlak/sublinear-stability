@@ -17,20 +17,16 @@
 
 \renewcommand{\theequation}{\thesection.\arabic{equation}}
 
-
 \newcommand{\inter}{\textrm{inter}}
 \newcommand{\intra}{\textrm{intra}}
 
-\title{Supplementary Material for\\ ``Diversity begets stability: sublinear growth scaling and competitive coexistence across ecosystems''}
-\author{Ian A. Hatton \and Onofrio Mazzarisi \and Ada Altieri \and Mathieu Barbier \and Matteo Smerlak}
+\title{Supplementary Material for\\\vspace{1cm} ``Diversity begets stability: sublinear growth scaling and competitive coexistence across ecosystems''}
+\author{Ian A. Hatton \and Onofrio Mazzarisi \and Ada Altieri \and Matthieu Barbier \and Matteo Smerlak}
 
 \begin{document}
 \appendix
 
 \maketitle
-
-
-
 
 \section{Conditions for stable coexistence in competitive communities}
 
@@ -38,8 +34,7 @@ Here we provide more details on the analytical results discussed in the main tex
 
 \subsection{Homogeneous communities: stability criteria}\label{homogeneous-stability}
 
-
-Let us model the competition of $S$ species with abundances $x_i$ (either numerical density $N_i$ or biomass density $B_i$) in terms of \emph{per capita} growth rates, as follows
+Let us model the competition of $S$ species with abundances $x_i$ (either numerical density $x_i$ or biomass density $B_i$) in terms of \emph{per capita} growth rates, as follows
 \begin{equation}\label{model}
 \frac{1}{x_i}\frac{dx_i}{dt} = \inter_i(x_i) + \intra_i(\mathbf x_{-i})\equiv f_i(\mathbf x), \quad 1\leq i\leq S .
 \end{equation}
@@ -112,13 +107,14 @@ A series of comments are in order:
 
 These results are obtained in the special case where interactions are homogenous (standard deviation $\sigma = 0$). When $\sigma > 0$, the GLV model falls squarely into the May phase, as illustrated e.g. by Fig. 3A of the main text. 
 
-\subsection{Random communities: DMFT and cavity solution}\label{cavity}
+\subsection{Random communities: DMFT and cavity solution}
 
 
 Dynamical mean field theory (DMFT) and the cavity method have been used to study the GLV model in the large diversity limit ($S\to\infty$) by several authors [REFS]. Here we show how to derive the derive analytical results in the sublinear model using these techniques.
 
-\subsubsection{Equilibrium distribution}
+\subsubsection{Equilibrium distribution}\label{cavity}
 
+@ONOFRIO
 
 \subsubsection{Stability condition}
 
@@ -136,7 +132,7 @@ Following Stone [STONE], we now apply this result to generalize the stability co
 \begin{equation}
     C^* = -\textrm{diag}(\mathbf x^*)[A + \textrm{diag}(\mathbf r  g'( \mathbf x^*))]\,
 \end{equation}
-where the product of vectors is understood component-wise. Denoting $\mathbf{1}$ the matrix with all entries equal to $1$, we can write $A = \mu \mathbf{1} - \mu I + J$ with $J$ as above, hence $C^*$ has the form $M + LJR$ with  
+where the product of vectors is understood component-wise. Denoting $\mathbf{1}$ the rank-one matrix with all entries equal to $1$, we can write $A = \mu \mathbf{1} - \mu I + J$ with $J$ as above, hence $C^*$ has the form $M + LJR$ with  
 $L = -\textrm{diag}(\mathbf x^*)$, $R = I$ and $M = \textrm{diag}(\mathbf x^*)[\mu I - \textrm{diag}(\mathbf r g'(\mathbf x^*))]$. Thus, we have that the eigenvalues of the community matrix $C^*$ must lie within the domain 
 \begin{equation}
     \sum_{i=1}^S\, \frac{(x_i^*)^2}{\vert z -x_i^*[\mu - r_ig'(x_i^*)]\vert ^2}\geq 1/\sigma^2. 
@@ -158,11 +154,29 @@ Making use of the cavity solution $P(x^*)$ obtained in sec. \ref{cavity}, we can
 \end{equation}
 TBC
 
-
 \subsection{Random communities: replica solution}
+
+In this section we provide an alternative derivation of the stability condition for random communities based on the replica method, borrowed from spin-glass and recently applied to ecological dynamics \cite{biroli2018marginally, altieri2021properties}. This alternative derivation requires two additional assumptions: the interaction matrix $A_{ij}$ must be symmetric ($A_{ij} = A_{ji}$), an sublinear growth must be stabilized by a finite carrying capacity $K$, viz. $g(x) = (x/x_0)^k - x/K$. For simplicity we take $r=1$ and $K = x_0 = 1$ in the following.
+
+Under these assumptions, the evolution of species abundances $x_i$ follows the euqation
+\begin{equation}
+    \frac{d x_i}{dt}= -x_i \left[V_i'(x_i) +\sum_{j \neq i} A_{ij} x_j \right] 
+        \label{dynamical_eq}
+\end{equation}
+where the one-species potential $V(x_i)$ represents self-regulation, \emph{i.e.}
+\begin{equation}
+  V_i(x_i)= -\frac{x_i^k}{k}  +\frac{x_i^2}{2}.
+\label{quadratic_potential}
+\end{equation}
+
+
+@ADA: replica calculation below, with notations consistent with main test (for instance $\mu$ and $\sigma$ are *not* rescaled). 
+
 
 \section{Linking dynamical theory with macroecological laws}
 This section expands on the way we parametrize the sublinear model using individual-level allometries to recover various macroecological patterns. 
+
+@ONOFRIO
 
 \subsection{Production-biomass scaling}
 \subsection{Species abundance distribution}

@@ -5,6 +5,8 @@ foreach(include, glob("*.jl", srcdir()))
 using ProgressMeter, Suppressor
 using DataFrames, StatsPlots, DataFramesMeta, LaTeXStrings
 using Distributions
+
+
 ### logistic
 
 P = Dict{Symbol, Any}(
@@ -76,7 +78,7 @@ p = Dict{Symbol, Any}(
     :k => 1.,
     :n0 => 1.,
     :K => K,
-    :dist => "normal",
+    :dist => "gamma",
     :N => 5,
     :seed => rand(UInt),
     :dist_r => Uniform(.1,10)

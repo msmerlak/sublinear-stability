@@ -1,7 +1,7 @@
 using DifferentialEquations
 using Random, Distributions
 using LinearAlgebra
-
+using Measurements
 
 function production(x, p)
         return (x > p[:b0]*p[:threshold] ? x^p[:k] : 0) - x^2/p[:K]
@@ -30,6 +30,7 @@ MAX_TIME = 1e3
 MAX_ABUNDANCE = 1e5
 
 blowup() = DiscreteCallback((u, t, integrator) -> maximum(u) > MAX_ABUNDANCE, terminate!)
+converged() = TerminateSteadyState(1e-4)
 
 function evolve!(p; trajectory = false)
 
@@ -43,19 +44,23 @@ function evolve!(p; trajectory = false)
             (f, x, p, t) -> F!(f, x, p); #in-place F faster
             jac = (j, x, p, t) -> J!(j, x, p) #specify jacobian speeds things up
             ),
-            fill(2., p[:S]), #initial condition
+            fill(1., p[:S]), #initial condition
             (0., MAX_TIME),
             p
         )
 
     sol = solve(pb, 
-        callback = CallbackSet(TerminateSteadyState(1e-3), blowup()), 
+        callback = CallbackSet(converged(), blowup()), 
         save_on = trajectory #don't save whole trajectory, only endpoint
         )
+
     p[:equilibrium] = sol.retcode == :Terminated ? sol.u[end] : NaN
     p[:converged] = (sol.retcode == :Terminated && maximum(p[:equilibrium]) < MAX_ABUNDANCE)
     p[:richness] = sum(sol.u[end] .> p[:b0]*p[:threshold])
     p[:diversity] = p[:richness] == 0 ? 0 : Ω(sol.u[end].*(sol.u[end] .> p[:b0]*p[:threshold]))
+
+    p[:survivors] = count(>=(p[:b0] * p[:threshold]), sol.u[end])
+    p[:biomass] = sum(sol.u[end])
 
     if trajectory
         p[:trajectory] = sol
@@ -163,6 +168,8 @@ function stability!(p)
 end
 
 
+
+
 function diversity(p)
     # run N simulates and append results to p
     diversity = Vector{Float64}(undef, p[:N])
@@ -195,11 +202,44 @@ function full_coexistence(p)
     return mean(full_coexistence)
 end
 
+function survivors(p)
+    # run N simulates and append results to p
+    survivors = Vector{Float64}(undef, p[:N])
+    p[:rng] = MersenneTwister()
+
+    for i in 1:p[:N]
+        add_interactions!(p)
+        add_growth_rates!(p)
+        add_initial_condition!(p)
+        evolve!(p)
+        survivors[i] = p[:survivors]
+    end
+
+    return mean(survivors) .± std(survivors)/sqrt(p[:N])
+end
+
+function biomass(p)
+    # run N simulates and append results to p
+    biomass = Vector{Float64}(undef, p[:N])
+    p[:rng] = MersenneTwister()
+
+    for i in 1:p[:N]
+        add_interactions!(p)
+        add_growth_rates!(p)
+        add_initial_condition!(p)
+        evolve!(p)
+        biomass[i] = p[:biomass]
+    end
+
+    return mean(biomass) .± std(biomass)/sqrt(p[:N])
+end
+
 function ahmadian(p)
     # run N simulates and append results to p
     ahmadian = Vector{Bool}(undef, p[:N])
     p[:rng] = MersenneTwister()
     @unpack μ, σ, k = p
+
     for i in 1:p[:N]
         add_interactions!(p)
         add_growth_rates!(p)
@@ -207,7 +247,6 @@ function ahmadian(p)
         evolve!(p)
         ahmadian[i] = sum(1 ./(μ .- (1-k)*ppart.(p[:equilibrium]).^(k-2))) < 1/σ^2
     end
-
 
     return mean(ahmadian)
 end

@@ -5,7 +5,7 @@ foreach(includet, glob("*.jl", srcdir()))
 using Plots; gr(dpi = 500)
 using LaTeXStrings
 
-P(k, S, K, μ) = Dict{Symbol, Any}(
+P(k, S, K, μ, N = 100) = Dict{Symbol, Any}(
     :scaled => false,
     :threshold => 1,
     :b0 => 0.01,
@@ -17,7 +17,7 @@ P(k, S, K, μ) = Dict{Symbol, Any}(
     :λ => 0,
     :K => k == 1 ? K : Inf,
     :dist => "gamma",
-    :N => 100,
+    :N => N,
     :seed => rand(UInt),
     :symm => false
 );
@@ -127,3 +127,37 @@ evolve!(pp; trajectory = true)
 plot(pp[:trajectory], legend = false)
 
 pp[:trajectory][end]
+
+### production scaling
+
+
+
+S = 50
+n = 500
+BP = Dict()
+Threads.@threads for k in (1, .75)
+    p = P.(k, 50, 100*rand(n), rand(n), 1)
+    BP[k] = reduce(hcat, biomass_production.(p))
+end
+
+plot(xaxis = :log, yaxis = :log,
+xlabel = "Community biomass ",
+ylabel = "Community production",
+legend = :bottomright
+)
+for k in (1, .75)
+    scatter!(
+        BP[k][1, :],
+        BP[k][2, :],
+        color = k == 1 ? COLOR_LOG : COLOR_SUB,
+        label = "k = $k",
+        markersize = BP[k][3, :]/5
+
+    )
+    plot!(x -> (k == 1 ? .5 : 5) * x^k,
+    color = k == 1 ? COLOR_LOG : COLOR_SUB,
+    label = "P ~ B^$k"
+    )
+end
+current()
+savefig(plotsdir("production-scaling.png"))

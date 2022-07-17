@@ -26,7 +26,7 @@ end
 
 ## solving
 
-MAX_TIME = 1e3
+MAX_TIME = 1e2
 MAX_ABUNDANCE = 1e5
 
 blowup() = DiscreteCallback((u, t, integrator) -> maximum(u) > MAX_ABUNDANCE, terminate!)
@@ -61,6 +61,7 @@ function evolve!(p; trajectory = false)
 
     p[:survivors] = count(>=(p[:b0] * p[:threshold]), sol.u[end])
     p[:biomass] = sum(sol.u[end])
+    p[:production] = sum(production.(sol.u[end], Ref(p)))
 
     if trajectory
         p[:trajectory] = sol
@@ -232,6 +233,43 @@ function biomass(p)
     end
 
     return mean(biomass) .± std(biomass)/sqrt(p[:N])
+end
+
+function production(p)
+    # run N simulates and append results to p
+    production = Vector{Float64}(undef, p[:N])
+    p[:rng] = MersenneTwister()
+
+    for i in 1:p[:N]
+        add_interactions!(p)
+        add_growth_rates!(p)
+        add_initial_condition!(p)
+        evolve!(p)
+        production[i] = p[:production]
+    end
+
+    return mean(production) .± std(production)/sqrt(p[:N])
+end
+
+function biomass_production(p)
+    # run N simulates and append results to p
+    production = Vector{Float64}(undef, p[:N])
+    biomass = Vector{Float64}(undef, p[:N])
+    survivors = Vector{Float64}(undef, p[:N])
+    p[:rng] = MersenneTwister()
+
+
+    for i in 1:p[:N]
+        add_interactions!(p)
+        add_growth_rates!(p)
+        add_initial_condition!(p)
+        evolve!(p)
+        biomass[i] = p[:biomass]
+        production[i] = p[:production]
+        survivors[i] = p[:survivors]
+    end
+
+    return [mean(biomass), mean(production), mean(survivors)]
 end
 
 function ahmadian(p)

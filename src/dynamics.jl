@@ -3,25 +3,13 @@ using Random, Distributions
 using LinearAlgebra
 using Measurements
 
-function production(x, p)
-        return (x > p[:b0]*p[:threshold] ? x^p[:k] : 0) - x^2/p[:K]
-end
-function dproduction(x, p)
-    return (x > p[:b0]*p[:threshold] ? p[:k]*x^(p[:k]-1) : 0) - 2x/p[:K]
-end
+
 
 function F!(f, x, p)
-    f .= p[:r]*p[:b0]^(1-p[:k]).*production.(ppart.(x), Ref(p)) .- p[:z]*x .- x.*(p[:a]*x) .+ p[:λ]
+    f .= p[:r]*p[:b0]^(1-p[:k]) .* (p[:a] * x).^(1-p[:k]) .- p[:z]*x .+ p[:λ]
 end
 
-function J!(j, x, p)
-    j = - x.*p[:a]
-    j[diagind(j)] .= p[:r]*p[:b0]^(1-p[:k]).*dproduction.(x, Ref(p)) .- 2x./p[:K]^(2 - p[:k]) .-p[:z] .- p[:a]*x
 
-
-    # above_threshold = x .> p[:b0]
-    # j[diagind(j)[above_threshold]] .+= p[:k].*p[:r][above_threshold].*x[above_threshold].^(p[:k]-1)
-end
 
 
 ## solving
@@ -61,7 +49,6 @@ function evolve!(p; trajectory = false)
 
     p[:survivors] = count(>=(p[:b0] * p[:threshold]), sol.u[end])
     p[:biomass] = sum(sol.u[end])
-    p[:production] = sum(production.(sol.u[end], Ref(p)))
 
     if trajectory
         p[:trajectory] = sol
@@ -85,8 +72,7 @@ function equilibria!(p)
         add_initial_condition!(p)
         pb = ODEProblem(
             ODEFunction(
-                (f, x, p, t) -> F!(f, x, p); #in-place F faster
-                jac = (j, x, p, t) -> J!(j, x, p) #specify jacobian speeds things up
+                (f, x, p, t) -> F!(f, x, p); 
                 ),
                 p[:x0],
                 (0., MAX_TIME),

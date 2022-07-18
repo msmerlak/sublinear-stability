@@ -5,10 +5,11 @@ foreach(includet, glob("*.jl", srcdir()))
 using Plots; gr(dpi = 500)
 using LaTeXStrings
 
-P(k, S, K, μ, N = 100) = Dict{Symbol, Any}(
+P(k, S, K, μ, r = 1, N = 100) = Dict{Symbol, Any}(
     :scaled => false,
     :threshold => 1,
     :b0 => 0.01,
+    :r => 1,
     :z => .1,
     :S => S,
     :μ => μ,
@@ -130,8 +131,7 @@ pp[:trajectory][end]
 
 ### production scaling
 
-
-
+# fixed r
 S = 50
 n = 500
 BP = Dict()
@@ -145,7 +145,7 @@ xlabel = "Community biomass ",
 ylabel = "Community production",
 legend = :bottomright
 )
-for k in (1, .75)
+Threads.@threads for k in (1, .75)
     scatter!(
         BP[k][1, :],
         BP[k][2, :],
@@ -161,3 +161,49 @@ for k in (1, .75)
 end
 current()
 savefig(plotsdir("production-scaling.png"))
+
+
+# r ~ K^4
+
+# fixed r
+S = 100
+n = 200
+
+
+plts = []
+
+for ξ in (0.01, .1, 1.)
+    Ks = 100rand(n)
+    rs = Ks.^(3/4-1)
+    μs = ξ * rand(n)
+    BP = Dict()
+    Threads.@threads for k in (1, .75)
+        p = P.(k, S, Ks, μs,  rs, 1)
+        BP[k] = reduce(hcat, biomass_production.(p))
+    end
+
+    plot(xaxis = :log, yaxis = :log,
+    xlabel = "Community biomass ",
+    ylabel = "Community production",
+    legend = false,
+    title = "S = $S, r = K^(-1/4), K ∈ [0,100],  μ = σ ∈ [0, $ξ]"
+    )
+    Threads.@threads for k in (1, .75)
+        scatter!(
+            BP[k][1, :],
+            BP[k][2, :],
+            color = k == 1 ? COLOR_LOG : COLOR_SUB,
+            label = "k = $k",
+            markersize = BP[k][3, :]/20
+
+        )
+        plot!(x -> (k == 1 ? .5 : 5) * x^k,
+        color = :gray,
+        linestyle = k == 1 ? :dash : :solid,
+        label = "P ~ B^$k"
+        )
+    end
+    push!(plts, current())
+end
+plot(plts..., layout = (3, 1), size = (700, 1000))
+savefig(plotsdir("r-K-scaled.png"))

@@ -136,7 +136,9 @@ end
 function add_growth_rates!(p)
     if haskey(p, :dist_r)
         p[:r] = rand(p[:rng], p[:dist_r], p[:S])
-    else 
+    elseif haskey(p, :r)
+        return
+    else
         p[:r] = ones(p[:S])
     end
 end

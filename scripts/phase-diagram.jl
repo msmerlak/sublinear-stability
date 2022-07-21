@@ -16,15 +16,15 @@ using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes
 P = Dict{Symbol, Any}(
         :scaled => true,
         :S => 100,
-        :μ => .1:.1:1.,
-        :σ => .01:.01:.1,
+        :μ => .01:.01:1.2,
+        :σ => .001:.001:.06,
         :k => .75,
         :b0 => 1.,
         :λ => 0,
-        :z => .1,
-        :K => 1e10,
+        :z => 0,
+        :K => 20,
         :threshold => false,
-        :dist => "gamma",
+        :dist => "normal",
         #:dist_r => Uniform(.01,1),
         :N => 1,
         :symm => false,
@@ -41,7 +41,7 @@ end
 sublinear = heatmap(
 P[:μ], 
 P[:σ],
-reshape(ϕ, length(P[:μ]), length(P[:σ]))',
+reshape(pippazza, length(P[:μ]), length(P[:σ]))',
 clims = (0,1),
 legend = :none,
 dpi = 500,
@@ -53,22 +53,42 @@ ylabel = L"\sigma \sqrt{S}",
 title = L"\textrm{Stability \,\, in \,\, parameter \,\, space}"
 )
 
-pippo = [x for x in .1:.005:1.]
-plot!(pippo, -(1/8)*(pippo.^2 .- pippo.^(2+1/(3/4-2))),
-color = :black,
+ν = sqrt(2*log(100))
+
+pippo = [x for x in .01:.005:1]
+plot!(pippo, ((1-P[:k])/ν)*(pippo .- pippo.^((P[:k]-3)/(P[:k]-2))),
+color = :green,
 linestyle = :solid,
 linewidth = 4,
 alpha=1,
 ylims = [0.001,0.04],
 xlims = [.0,1]
 )
-plot!(pippo, -(1/4/2)*( .- pippo.^(2+1/(3/4-2))),
-color = :black,
+
+pippo = [x for x in .01:.005:1.2]
+plot!(pippo, ((1-P[:k])/ν)*pippo,
+color = :green,
 linestyle = :solid,
 linewidth = 4,
-alpha=.5,
-ylims = [0.001,0.1],
-xlims = [.0,1]
+alpha=1,
+ylims = [0.,.12],
+#xlims = [.0,1]
+)
+
+pippo = [x for x in .1:.005:.8]
+plot!(pippo, [1/20/sqrt(ν^2+1) for i in pippo],
+color = :green,
+linestyle = :solid,
+linewidth = 4,
+alpha=1,
+#ylims = [0.,.12],
+#xlims = [.0,1]
+)
+
+plot!(pippo, .05*pippo.^0,
+labels = false,
+linewidth = 4,
+linecolor = COLOR_LOG35,
 )
 
 vline!(P[:σ], [1],
@@ -77,8 +97,9 @@ alpha = .5,
 linewidth=2,
 linestyle = :dash)
 
-savefig("robustness-zero-mod.svg")
+savefig("SM-extiction-threshold.svg")
 
+pippazzaccia = readdlm("./papers/onofrio/fig/prob-stability-S_100-N_10-b₀_1.0-σ_0.001:0.001:0.12-μ_0.01:0.01:1.2-z_0.0-dist_normal-k_1.0.txt")
 pippazza = readdlm("./papers/onofrio/fig/prob-stability-zero-S_100-N_10-n₀_1-σ_0.001:0.001:0.06-μ_0.01:0.01:1.2.txt")
 pippa = readdlm("./papers/onofrio/fig/prob-stability-S_100-N_10-n₀_1.0e-8-σ_0.001:0.001:0.12-μ_0.01:0.01:1.2.txt")
 
@@ -89,6 +110,23 @@ pippa = readdlm("./papers/onofrio/fig/prob-stability-S_100-N_10-n₀_1.0e-8-σ_0
 #     color = "blue"
 #     )
 
+## time averaged diversity
+
+ϕ = ThreadsX.collect(time_avg_diversity(p) for p in expand(P));
+sublinear = heatmap(
+    P[:μ], 
+    P[:σ],
+    reshape(ϕ, length(P[:μ]), length(P[:σ]))',
+    clims = (0,1),
+    legend = :none,
+    dpi = 500,
+    alpha = 1.,
+    c = palette([:white, COLOR_LOG49], 100),
+    grid = false,
+    xlabel = L"\mu S ",
+    ylabel = L"\sigma\sqrt{S}",
+    title = "time-averaged Shannon diversity"
+)
 
 # # diversity
 

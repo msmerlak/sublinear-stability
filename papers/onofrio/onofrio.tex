@@ -74,160 +74,293 @@
 
 \maketitle
 
-\section{$\alpha\beta\gamma$-model}
+\section{Complexity-stability regimes}
+\label{sec: complexity-stability regimes}
+In this section we describe how the relationship between complexity and stability
+is shaped by dynamical properties of complex ecosystems.
+\textcolor{red}{Refine this Intro}
 
 Consider a competitive community of $S$ species
-defined by the following dynamics for the population densities
+defined by the following dynamics for the population abundances
 \begin{equation}
-    \frac{dn_i}{dt}=n_i^{\alpha}-n_i^{\beta}\sum_{j}A_{ij}n_j^{\gamma} \, ,
+    \frac{dx_i}{dt}=x_i^{\alpha}-x_i^{\beta}\sum_{j}A_{ij}x_j^{\gamma} \, ,
 \end{equation}
 where the sum runs from $j=1$ to $j=S$ and the off-diagonal elements
 of $A$ are extracted from a distribution
-with mean $\mu>0$ and standard deviation $\sigma$ while $A_{ii}=1/K$, $\forall i$,
-$K$ being the (uniform) carrying capacity.
-To be more precise $K^{1/(\beta+\gamma-\alpha)}$ is the carrying capacity and for
-dimensional consistency we could study instead, e.g., the
-population density normalized over a density threshold $\tilde{n}_{i}$,
-$x_i=(n_i/\tilde{n}_i)$. We consider,
-without loss of generality for the results that follows, $\tilde{n}_i = 1$ $\forall i$
-and stick with the notation $n_i$.
+with mean $\mu>0$ and standard deviation $\sigma$ while $A_{ii}=1/K^{\beta+\gamma-\alpha}$, $\forall i$,
+and $K$ is the (uniform) carrying capacity.
 If the equilibrium is feasible it formally reads
 \begin{equation}
-    (n_i^*)^{\alpha-\beta} = \sum_{j}A_{ij}(n_j^*)^{\gamma} \, .
+    (x_i^*)^{\alpha-\beta} = \sum_{j}A_{ij}(x_j^*)^{\gamma} \, .
 \end{equation}
 The element of the jacobian for $j\neq i$ read
 \begin{equation}
-    J_{ij} = -\gamma n_i^{\beta}A_{ij}n_j^{\gamma} \, ,
+    J_{ij} = -\gamma x_i^{\beta}A_{ij}x_j^{\gamma} \, ,
 \end{equation}
 while the diagonal components read
 \begin{equation}
-    J_{ii} = \alpha n_i^{\alpha-1}-\beta n_i^{\beta-1}\sum_{j\neq i}A_{ij}n_j^{\gamma}
-    - (\beta+\gamma)A_{ii}n_i^{\beta+\gamma} \, .
+    J_{ii} = \alpha x_i^{\alpha-1}-\beta x_i^{\beta-1}\sum_{j\neq i}A_{ij}x_j^{\gamma}
+    - (\beta+\gamma)A_{ii}x_i^{\beta+\gamma} \, .
 \end{equation}
 
-\subsection{Dynamic May / anti-May bound, uniform interaction limit}
 In the case of uniform interactions ($\sigma\to0$)
 the species population are all equal and the equilibrium reads
 \begin{equation}
-    n^*=\left[\mu(S-1)+\frac{1}{K}\right]^{1/(\alpha-\beta-\gamma)} \, .
+    x^*=\left[\mu(S-1)+\frac{1}{K^{\beta+\gamma-\alpha}}\right]^{1/(\alpha-\beta-\gamma)} \, .
 \end{equation}
 The jacobian evaluated at equilibrium is
 \begin{equation}
-    J_{ij}\Big{|}_{n=n^*} = -\gamma \mu (n^*)^{\beta+\gamma-1} \, ,
+    J_{ij}\Big{|}_{x=x^*} = -\gamma \mu (x^*)^{\beta+\gamma-1} \, ,
 \end{equation}
 \begin{equation}
-    J_{ii}\Big{|}_{n=n^*} = \alpha (n^*)^{\alpha-1}-\beta (n^*)^{\beta+\gamma-1}\mu(S-1)
-                            -\frac{(\beta+\gamma)}{K}(n^*)^{\beta+\gamma-1}\, .
+    J_{ii}\Big{|}_{x=x^*} = \alpha (x^*)^{\alpha-1}-\beta (x^*)^{\beta+\gamma-1}\mu(S-1)
+                            -\frac{(\beta+\gamma)}{K^{\beta+\gamma-\alpha}}(x^*)^{\beta+\gamma-1}\, .
 \end{equation}
 
 The maximum eigenvalue $\lambda_{\textrm{max}}$ is $S-1$ degenerate and reads formally
 \begin{equation}
-    \lambda_{\textrm{max}} = J_{ii}\Big{|}_{n=n^*} - J_{ij}\Big{|}_{n=n^*} \, .
+    \lambda_{\textrm{max}} = J_{ii}\Big{|}_{x=x^*} - J_{ij}\Big{|}_{x=x^*} \, .
 \end{equation}
 The stability condition
 \begin{equation}
-    \lambda_{\textrm{max}} = \alpha (n^*)^{\alpha-1}-(n^*)^{\beta+\gamma-1}\left[\beta \mu(S-1)
-    +\frac{(\beta+\gamma)}{K}-\gamma\mu\right]<0 \, ,
+    \lambda_{\textrm{max}} = \alpha (x^*)^{\alpha-1}-(x^*)^{\beta+\gamma-1}\left[\beta \mu(S-1)
+    +\frac{(\beta+\gamma)}{K^{\beta+\gamma-\alpha}}-\gamma\mu\right]<0 \, ,
 \end{equation}
 can be written as
 \begin{equation}
-    \alpha (n^*)^{\alpha-\beta-\gamma}-\left[\beta \mu(S-1)
-    +\frac{(\beta+\gamma)}{K}-\gamma\mu\right]<0 \, ,
+    \alpha (x^*)^{\alpha-\beta-\gamma}-\left[\beta \mu(S-1)
+    +\frac{(\beta+\gamma)}{K^{\beta+\gamma-\alpha}}-\gamma\mu\right]<0 \, ,
 \end{equation}
-which, using the expression for $n^*$ and after some manipulations reads
+which, using the expression for $x^*$ and after some manipulations reads
 \begin{equation}
-    (S-1)(\beta-\alpha) > \frac{K\mu\gamma+\alpha-\beta-\gamma}{K\mu} \, .
+    (S-1)(\beta-\alpha) > \frac{K^{\beta+\gamma-\alpha}\mu\gamma+\alpha-\beta-\gamma}{K^{\beta+\gamma-\alpha}\mu} \, .
 \end{equation}
 We have then three possibilities:
 \begin{align}
-    S &> 1 + \frac{K\mu\gamma+\alpha-\beta-\gamma}{K\mu(\beta-\alpha)} 
-    &\textrm{if} \quad \beta/\alpha>1 \, , \\
-    S &< 1 + \frac{K\mu\gamma+\alpha-\beta-\gamma}{K\mu(\beta-\alpha)} 
-    &\textrm{if} \quad \beta/\alpha<1 \, , \\
-    \mu &< \frac{1}{K} &\textrm{if} \quad \beta/\alpha=1 \, .
+    S &> 1 + \frac{K^{\beta+\gamma-\alpha}\mu\gamma+\alpha-\beta-\gamma}{K^{\beta+\gamma-\alpha}\mu(\beta-\alpha)} 
+    &\textrm{if} \quad \alpha<\beta \, , \\
+    S &< 1 + \frac{K^{\beta+\gamma-\alpha}\mu\gamma+\alpha-\beta-\gamma}{K^{\beta+\gamma-\alpha}\mu(\beta-\alpha)} 
+    &\textrm{if} \quad \alpha>\beta \, , \\
+    \mu &< \frac{1}{K^{\gamma}} &\textrm{if} \quad \alpha=\beta \, .
 \end{align}
 A series of comments is in order. 
 \begin{itemize}
-    \item Depending on $\beta/\alpha$ we have \textit{two
-    regimes}: one in which increasing $S$ enhances stability ($\beta/\alpha>1$) and 
-    one in which it hinders stability ($\beta/\alpha<1$).
+    \item Depending on $\alpha$ and $\beta$ we have \textit{two
+    regimes}: one in which increasing $S$ enhances stability ($\alpha<\beta$) and 
+    one in which it hinders stability ($\alpha>\beta$).
     Notably this is independent from $\gamma$, indicating that only the interplay between
     the density dependence of the contribution of a species to the interactions and
     the density dependence of its production term that is (qualitatively) relevant; 
     and not the form of the contribution of the competitors to the interactions.
-    \item The critical case ($\beta/\alpha=1$) not only recovers the usual GLV result
-    but \textit{generalize it}, indeed it does not depend on $\gamma$ which cancels out.
-    \item For $K\to\infty$ and $\beta=1=\gamma$ we recover the result
+    \item The critical case ($\alpha=\beta$) recovers the usual GLV result
+    for $\gamma=1$ and generalizes it for generic $\gamma$.
+    \item For $K\to\infty$ and $\beta=1=\gamma$ we obtain
     \begin{equation}
         S=1+\frac{1}{1-\alpha} \, .
     \end{equation}
 \end{itemize}
-
-Being the specification of $\gamma$ 
-mostly irrelevant, for symmetry reason it is probably sensible to consider 
+For symmetry reasons, it is probably sensible to consider 
 models with $\gamma=\beta$,
 leaving the potential asymmetry of the competitive interaction between two species
 to the coefficient $A_{ij}$.
 
-One can therefore identify two different regimes (we could dub them \textit{May} and \textit{anti-May})
+One can therefore identify two different regimes (complexity hinders stability (May) and 
+complexity increases stability)
 characterized by the dynamical response of the population with respect to their density
 encoded in the exponents $\alpha$ and $\beta$, resepctively associated
 to production and losses. The GLV case $\alpha=\beta$ is right in the middle for uniform
 interactions ($\sigma\to0$) and falls into the May regime otherwise ($\sigma\neq0$). 
 
-\section{Cavity solution}
-In order to better relate to the data from observations let us consider
-the dynamics of the biomass densities $b_i$ for $S$ species.
-The dynamics is completely described by
+\section{On sublinear production}
+\label{sec: On sublinear production}
+Observations point towards sublinear production scaling
+with respect to the population biomass density. 
+This observations may refer to
+dynamical production or to the equilibrium production observed
+across a biomass gradient.
+
+In this section we discuss how, although dynamical sublinear production
+does not generally leads to sublinear production across a biomass
+gradient, it might be necessary for sublinear scaling across a biomass gradient.
+
+Let us focus on a single population example to calrify ideas.
+Consider a production function of the form
 \begin{equation}
-    \frac{d b_i}{dt} = r_ib_i\left(\frac{b_i}{\tilde{b}}\right)^{\alpha -1} - b_i\sum_{j\neq i}A_{ij}b_j \, ,
+    g(x) = r x^\alpha \, ,
+\label{eq: production}
+\end{equation}
+where $x$ is the abundance of the population, $\alpha\leq1$
+specify the intensity of sublinear dynamical scaling (linear when $\alpha=1$) 
+and $r$ is the parameter that allows to move across a gradient.
+Consider then a loss term of the form
+\begin{equation}
+    l(x) = z x^\beta \, .
+\end{equation} 
+The evolution equaiton for the population is 
+\begin{equation}
+    \frac{dx}{dt} = g(x) - l(x) = r x^\alpha - z x^\beta \, ,
+    \label{eq: single}
+\end{equation} 
+which reduces to logistic growth for $\alpha=1$ and $\beta=2$.
+The equilibrium is given by
+\begin{equation}
+    x^* = \left(\frac{r}{z}\right)^{1/(\beta-\alpha)} \, ,
+\label{eq: equilibrium single}
+\end{equation}
+and the stability condition is given by
+\begin{equation}
+    \frac{d\left[g(x)-l(x)\right]}{dx}\bigg|_{x=x^*} < 0 \, ,
+\end{equation}
+which leads, after some calculations, to the condition
+\begin{equation}
+    \alpha<\beta \, ,
+\end{equation}
+independent from $r$ and $z$.
+
+The equilibrium production scales, at varying growth rate $r$,
+as $g(x^*)=z(x^*)^\beta$ as can be noted by Eq.~(\ref{eq: equilibrium single})
+for $r$ and then substituting it in the defining Eq.~(\ref{eq: production})
+or simply by considering the dynamical equation at stationarity.
+Notice that, if $z$ is varied instead, the exponent
+of dynamical and across-gradient production coincide.
+
+In summary, for an environmental change that amount to a change in $r$, 
+the production across a gradient 
+scales as $(x^*)^\beta$. In order for
+the stationary solution to be stable an exponent $\alpha<\beta$
+for the dynamical produciton is needed.
+Therefore, in order to have sublinear $g(x^*)$ across a gradient,
+we need $\alpha<\beta<1$.
+If the increment of the equilibrium density is due to decreasing $x$,
+equilibrium and dynamical production scale in the same way and in order to
+have sublinear $g(x^*)$ we need $\alpha<1$ with $\alpha<\beta$ for stability
+but no constraint on $\beta$. Either way we need $\alpha<1$.
+
+\section{Cavity solution for sublinear growth}
+\label{sec: cavity solution}
+In this section we derive the cavity solution which is used in the main text.
+
+Let us consider the dynamics of the population abundances $x_i$ for $S$ species
+\begin{equation}
+    \frac{d x_i}{dt} = r_ix_i^k - x_i\sum_{j\neq i}A_{ij}x_j \, ,
     \label{eq: full system}
 \end{equation}
-where the entries of the interaction matrix $A_{ij}$ have the dimensions of inverse time times inverse
-mass and are randomly distributed with average $\mu$ and standard deviation $\sigma$,
-the $r_i$ are growth rates with the dimensions of inverse time extracted from a distribution
-$P(r)$ and the biomass density scale
-$\tilde{b}$ is assumed, due to physiological and ecological arguments,
-to be a species independent constant.
+where the entries of the interaction matrix $A_{ij}$ 
+and are randomly distributed with average $\mu$ and standard deviation $\sigma$
+and the $r_i$ are growth rates extracted from a distribution $P(r)$. 
 
-\textcolor{red}{Cavity trick}
+\textcolor{red}{Cavity trick description ... 
+(Refs.~\cite{Bunin2017,Barbier18,Barbier17,Advani2018,Cui2020})}
 
-The cavity solution is the random variable $b^*$ given by
+
+The cavity solution is the random variable $x^*$ given by
 \begin{equation}
-    b^* = \left(\frac{\mu S \langle b^* \rangle + \sigma \sqrt{S} \eta}
-    {r \tilde{b}^{1-\alpha}}\right)^{1/(\alpha-1)} \, ,
+    x^* = \left(\frac{\mu S \langle x^* \rangle + \sigma \sqrt{S\langle (x^*)^2\rangle} \eta}
+    {r}\right)^{1/(k-1)} \, ,
+    \label{eq: cavity solution}
 \end{equation}
-where represent $\langle b^*\rangle$ is the equilibrium average biomass density
-and $\eta$ have zero mean and variance $\langle (b^*)^2\rangle$.
-The equilibrium probability distribution function for $b^*$, $P(b^*)$,
+where $\langle x^*\rangle$ and $\langle (x^*)^2\rangle$ are 
+the first two moments of the equilibrium average biomass density
+and $\eta$ is a standard normal random variable, i.e. $P(\eta)=\mathcal N (0,1)$.
+The equilibrium probability distribution function for $x^*$, $P(x^*)$,
 can be obtained through the pushforward of the distribution of $\eta$ and $r$
+\textcolor{red}{add details of derivation}
 \begin{equation}
-    P(b^*)=\frac{(1-\alpha)|b^*|^{\alpha-2}}{\sqrt{2\pi \sigma^2 S\langle (b^*)^2 \rangle}}
+    P(x^*)=\frac{(1-k)|x^*|^{k-2}}{\sqrt{2\pi \sigma^2 S\langle (x^*)^2 \rangle}}
     \int_0^{\infty}dr \ r P(r)
-    \exp{\left\{-\frac{\left[(b^*)^{\alpha-1}-\mu S\langle b^*\rangle/r\right]^2}{2\sigma^2S\langle (b^*)^2 \rangle/r^2}\right\}} \, ,
+    \exp{\left\{-\frac{\left[(x^*)^{k-1}-\mu S\langle x^*\rangle/r\right]^2}{2\sigma^2S\langle (x^*)^2 \rangle/r^2}\right\}} \, ,
 \end{equation}
-where we set without loss of generality $\tilde{b}=1$ and the fraction
-of survival species $\phi$ and the first two moment
+where the fraction of survival species $\phi$ and the first two moment
 have to be self-consistently computed
 \begin{align}
-    \phi&= \int_0^{\infty}db^* \ P(b^*)\, , \\
-    \langle b^*\rangle&=\frac{1}{\phi}\int_0^{\infty}db^* \ b^*P(b^*) \, , \\
-    \langle (b^*)^2\rangle&=\frac{1}{\phi}\int_0^{\infty}db^* \ (b^*)^2 P(b^*) \, .
+    \phi&= \int_0^{\infty}dx^* \ P(x^*)\, , \nonumber \\
+    \langle x^*\rangle&=\frac{1}{\phi}\int_0^{\infty}dx^* \ x^*P(x^*) \, , \label{eq: self-consistenty}\\
+    \langle (x^*)^2\rangle&=\frac{1}{\phi}\int_0^{\infty}dx^* \ (x^*)^2 P(x^*) \, . \nonumber
 \end{align}
-\textcolor{red}{Notice that the integrals for the first and the second moment have to be properly regularized,
-Their value is cut-off independent up to a certain value which the depend on the parameters and then
-diverges. If the value of density up to which they are cut-off independent is so big that is unphysical
-or unbiological then one can stop before and extract the values of the moments.
-See also, e.g., Ref.~\cite{Cui2020} for the analysis of a similar situation in the
-context of consumer-resource dynamics}
 
-In the case of a unique $r$ for every species in the community, i.e. $P(\tilde{r})=\delta(r-\tilde{r})$
+In the case of a unique $r$ for every species in the community, i.e. $P(\bar{r})=\delta(r-\bar{r})$
 the distribution reads
 \begin{equation}
-    P(b^*)=\frac{(1-\alpha)|b^*|^{\alpha-2}}{\sqrt{2\pi \sigma^2 S\langle (b^*)^2 \rangle/r^2}}
-    \exp{\left\{-\frac{\left[(b^*)^{\alpha-1}-\mu S\langle b^*\rangle/r\right]^2}{2\sigma^2S\langle (b^*)^2 \rangle/r^2}\right\}} \, .
+    P(x^*)=\frac{(1-k)|x^*|^{k-2}}{\sqrt{2\pi \sigma^2 S\langle (x^*)^2 \rangle/r^2}}
+    \exp{\left\{-\frac{\left[(x^*)^{k-1}-\mu S\langle x^*\rangle/r\right]^2}{2\sigma^2S\langle (x^*)^2 \rangle/r^2}\right\}} \, .
     \label{eq: species dist unique r}
 \end{equation}
+We can't formally solve the self-consistent equations~(\ref{eq: self-consistenty})
+because the first and second moment of  for this distribution diverges.
+A similiar problem is encountered in Ref.~\cite{Cui2020}
+in the context of consumer-resource models for the cavity calculations of
+the distribution of the resources which is, \textit{mutatis mutandis}, 
+equivalent of our case for $k=2$. (\textcolor{red}{We should take into account that
+the cavity solution is an idealization of the initial problem and 
+this kind of pathologies are not necessarely realistic.
+For example extreme value theory~\cite{Majumdar2020} predicts that on average the largest
+value observed in a system of
+size $S$ scales like $S$ itself. On the other hand the distribution as $S$ increases
+becomes closer to a gaussian and eventually all the heterogeneity disappears
+because of the size dependence of the term multiplying $\eta$ is quadratic while the
+one multuplying $\mu$ is linear and dominates for very large $S$.})
+
+\textcolor{red}{Refine or remove these explanations.}
+
+Assuming that the fluctuations in the numerator in Eq.~(\ref{eq: cavity solution})
+are small, i.e. $\sigma \sqrt{S\langle (x^*)^2\rangle}\ll \mu S \langle x^* \rangle$,
+we can Taylor expand to the first-order the cavity solution obtaining
+\begin{equation}
+    x^* = \left(\frac{ \mu S \langle x^* \rangle}{r}\right)^{1/(k-1)} -
+    \frac{1}{1-k}\left(\frac{ \mu S \langle x^* \rangle}{r}\right)^{(2-k)/(k-1)}\sigma \sqrt{S\langle (x^*)^2\rangle}\eta \, ,
+\end{equation}
+which is a gaussian variable, truncated in 0 to respect
+non-negativity constraint, with mean
+\begin{equation}
+    \langle x^* \rangle = \left(\frac{ \mu S \langle x^* \rangle}{r}\right)^{1/(k-1)} \, ,
+\end{equation}
+and standard deviation
+\begin{equation}
+    \sqrt{\langle (x^*)^2 \rangle - \langle x^* \rangle^2} =
+    \frac{1}{1-k}\left(\frac{ \mu S \langle x^* \rangle}{r}\right)^{(2-k)/(k-1)}\sigma \sqrt{S\langle (x^*)^2\rangle} \, .
+\end{equation}
+
+In this approximation we can solve analytically 
+the self consistency equations for the first to moment of the
+distribution as functions of the parameters, namely 
+\begin{equation}
+    \langle x^* \rangle = \left(\frac{ \mu S}{r}\right)^{1/(k-2)} \, ,
+\end{equation}
+and
+\begin{equation}
+    \langle (x^*)^2 \rangle = \frac{ \langle x^* \rangle^2}
+    {\left[1-\left(\frac{1}{1-k}\right)^2\langle x^* \rangle^{2(2-k)}
+    \sigma^2S\right]} \, .
+\end{equation}
+
+We can now either use directly the gaussian approximation to describe the
+species distribution or alternative use the moment evaluated by means
+of the gaussian approximation in expression 
+
+For practical purposes
+we can also solve numerically the self-consistent
+equations~(\ref{eq: self-consistenty}) using a large
+upper cut off $x_{\textrm{up}}$ which we checked can be widely varied
+and gives consistent results.
+In Fig.~\ref{fig: SM cavity + mixed + gauss} we report comparisons
+of the cavity solution~(\ref{eq: species dist unique r}) 
+obtained solving numerically the self-consistent equations,
+the one with the moment injected from the gaussian calulation and the
+approximated gaussian solution.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1\textwidth]{fig/SM-cavity+mixed+gaussian.pdf}
+    \caption{Cavity solution in Eq.~(\ref{eq: species dist unique r}) (black solid line) with the
+    moment numerically self-consistently computed from the full distribution, 
+    the mixed approximation (black dashed line) obtained using the 
+    gaussian moments in  Eq.~(\ref{eq: species dist unique r}) and the gaussian approximation (red line)
+    are compared with simulation for a system 
+    of $S=10^3$ species with
+    $r=1$, $\mu=10^{-3}$, $k=3/4$ and $\sigma=\mu/10$ (left),
+    $\sigma=\mu/20$ (center) and $\sigma=\mu/100$ (right).}
+    \label{fig: SM cavity + mixed + gauss}
+\end{figure}
 
 \subsection{Dynamical mean field theory}
 In order to obtain information about the dynamics
@@ -236,185 +369,736 @@ following, e.g., Ref.~\cite{Roy2019} we can derive
 from Eq.~(\ref{eq: full system}), for large $S$, 
 a dynamical mean field theory which provide us a stochastic differential
 equation describing statistically the entire ensemble of species
-thorug the evolution of the representtive random variable $b$
+thorug the evolution of the representtive random variable $x$
 \begin{equation}
-    \frac{d b}{dt} = rb\left(\frac{b}{\tilde{b}}\right)^{\alpha -1} -
-     b\left(\mu S \langle b \rangle_t + \sigma \sqrt{S} \eta_t \right)\, ,
+    \frac{d x}{dt} = rx^k -
+     x\left(\mu S \langle x \rangle_t + \sigma \sqrt{S} \eta_t \right)\, ,
 \label{eq: dmft}
 \end{equation}
-where $\langle b\rangle_t=\langle b(t)\rangle$ is the average at time $t$ of the random variable
+where $\langle x\rangle_t=\langle x(t)\rangle$ is the average at time $t$ of the random variable
 $b$ and $\eta$ is a gaussian variable
-with zero mean and correlation given by $\langle b(t)b(s)\rangle$; these first and
+with zero mean and correlation given by $\langle x(t)x(s)\rangle$; these first and
 second moment have to be computed self-consistently at each time. 
 At equilibrium the cavity solution is recovered.
 
-\section{On sublinear production}
-\label{sec: On sublinear production}
-Observations point towards a sublinear production scaling
-with respect to the population biomass density. 
-This observations may refer to
-dynamical production or to the equilibrium production observed
-across a biomass gradient.
+From Eq.~(\ref{eq: dmft}) is possible to connect the arguments about
+sublinear growth for the one dimensional model in 
+Section~\ref{sec: On sublinear production}
+to a competitive community.
 
-Here we discuss how dynamical sublinear production does not generally leads to 
-sublinear production across a biomass gradient.
-Nonetheless, although not sufficient, it might be necessary for (or at least
-functional to) sublinear scaling across a biomass gradient.
+\textcolor{red}{Figure out if leave or not this subsection.}
 
-\subsection{Single population}
-Let us focus on a single population example to calrify the ideas.
-Consider a production function of the form
+
+\section{Boundary of stable phase in $(\mu, \sigma)$ plane}
+\textcolor{red}{double-check a la Stone 
+derivation of the results and finish derivation for the
+calculation of the critical line.}
+
+In this section we combine the results from Ahmadian \emph{et al.}~\cite{Ahmadian2015} 
+on the distribution of eigenvalues
+in the complex plane with the cavity solution derived in 
+Section~\ref{sec: cavity solution} to obtain a line in the $(\mu, \sigma)$
+plane separating a stable and an unstbale phase.
+
+In Ref.~\cite{Ahmadian2015} is shown that the spectrum of matrices of the form 
+$M + LJR$, where $M$,  $L$ and $R$ are $S\times S$ deterministic matrices and $J$ 
+is a $S\times S$ random matrix whose coefficients have mean zero and variance $\sigma^2$ 
+is contained in the region of the complex plane 
 \begin{equation}
-    P(n) = r n^\alpha \, ,
-\label{eq: production}
+    \textrm{Tr}[(M_zM_z^\dagger)^{-1}]\geq 1/\sigma^2 \quad \textrm{where}\ M_z = L^{-1}(zI - M)R^{-1}, 
 \end{equation}
-where $n$ is the biomass density of the population, $\alpha\leq1$
-specify the intensity of sublinear dynamical scaling (linear when $\alpha=1$) 
-and $r$ is the parameter that allows to move across a biomass gradient.
-Consider then a loss term of the form
+where $\textrm{Tr}$ denotes the trace of the matrix. In the special case where 
+$L$, $R$ and $M$ are diagonal, this condition reads
 \begin{equation}
-    L(n) = s n^\beta \, .
+    \sum_{i=1}^S\frac{(L_{i}R_{i})^2}{ \vert z - M_{i}\vert^2 }\geq 1/\sigma^2.
+\end{equation}
+
+Consider the system of $S$ species defined by
+\begin{equation}
+    \frac{dx_i}{dt} = x_ig(x_i) - x_i\sum_{j\neq i}A_{ij}x_j \, ,
+\end{equation}
+where the $g(x_i)$ is the per capita growth rate and $A$ is a matrix with
+zero diagonal and off-diagonal elements
+ditrubuted with mean $\mu$ and standard deviation $\sigma$.
+
+We can apply this result to estimate the location of the eigenvalues 
+of the community matrix $C$, defined as the jacobian of the system
+evaluate equilibrium point $\bf{x}^*$.
+The off diagonal elements of the jacobian at equilibrium are
+\begin{equation}
+    J_{ij}\Big{|}_{\bf{x}=\bf{x}^*} = -x_i^*A_{ij} \, ,
+\end{equation}
+while the diagonal reads
+\begin{equation}
+    J_{ii}\Big{|}_{\bf{x}=\bf{x}^*} = -\sum_{j\neq i}A_{ij}x_j^* + g(x_i^*)-x_i^*g'(x_i^*) 
+    = -x_i^*g'(x_i^*) \, ,
+\end{equation}
+where for the last equality we used the equilibrium relation and $g'(x_i^*):=d g(x_i)/dx_i|_{x_i=x_i^*}$.
+The community matrix therefore reads
+\begin{equation}
+    C = -D(\mathbf x^*)A - D(\mathbf x^*g'(\mathbf x^*)) \, ,
+\end{equation}
+where we denote $D(\bf{y}):=\textrm{diag}(\bf{y})$ stands for a diagonal matrix
+filled with the components of the vector $\bf{y}$.
+Writing $A = \mu \mathbf{1} - \mu I + J$, and identifying 
+$L = -D(\mathbf x^*)$, $R = I$ and $M = \mu I -  D(\mathbf x^*g'(\mathbf x^*))$
+we can say that the eigenvalues lie within the domain
+\begin{equation}
+\sum_{i} \frac{(x_i^*)^2}{\vert z -\mu + x_i^*g'(x_i^*)\vert ^2}\geq 1/\sigma^2. 
 \end{equation} 
-The evolution equaiton for the population is 
+This domain touches $z = 0$ (triggering an instability) whenever
 \begin{equation}
-    \frac{dn}{dt} = P(n) - L(n) = r n^\alpha - s n^\beta \, ,
-    \label{eq: single}
-\end{equation} 
-which reduces to logistic growth for $\alpha=1$ and $\beta=2$.
-The equilibrium is given by
-\begin{equation}
-    n^* = \left(\frac{r}{s}\right)^{1/(\beta-\alpha)} \, ,
-\label{eq: equilibrium single}
+    \sum_i \frac{1}{|\mu -P(n_i^*)/(n_i^*)^2+P'(n_i^*)/n_i^*|^2}\geq 1/\sigma^2 \, .
 \end{equation}
-and the stability condition is given by
+
+\section{Extinction threshold}
+In this section we derive an expression to estimate the 
+extinction threshold in parameter space. 
+It can be obtained by means of the gaussian
+approximation of the cavity solution.
+
+We recall the definition for the first and
+second moment of the distribution of $x$
 \begin{equation}
-    \frac{d\left[P(n)-L(n)\right]}{dn}\bigg|_{n=n^*} < 0 \, ,
+    \langle x^* \rangle = \left(\frac{ \mu S}{rx_0^{1-k}}\right)^{1/(k-2)} \, ,
 \end{equation}
-which leads, after some calculations, to the condition
+and
 \begin{equation}
-    \alpha<\beta \, ,
+    \langle (x^*)^2 \rangle = \frac{ \langle x^* \rangle^2}
+    {\left[1-\left(\frac{1}{1-k}\right)^2\langle x^* \rangle^{2(2-k)}
+    \sigma^2S\right]} \, ,
 \end{equation}
-independent from $r$ and $s$.
+where we explicitely wrote down the scale $x_0$ because
+in the following we want to study both, the case
+where the growth term is not modified below threshold
+and when is set equal to zero causing every species below threshold
+to go extinct.
 
-It possible to appreciate from Eq.~(\ref{eq: equilibrium single})
-that $\alpha>\beta$, apart from making the equilibrium unstable, implies that
-the stationary population \textit{decreases} for increasing $r$,
-which is biologically unreasonable.
+First we approximate the second moment by expanding it
+to the first order in the second addend in the denominator
+\begin{equation}
+    \langle (x^*)^2 \rangle \approx \langle x^* \rangle^2
+    + \left(\frac{1}{1-k}\right)^2\langle x^* \rangle^{2(3-k)}\sigma^2 S \, ,
+\end{equation}
+so that the standard deviation can be written as
+\begin{equation}
+    \sqrt{\langle (x^*)^2 \rangle - \langle x^* \rangle^2} \equiv \textrm{std}(x^*)=
+    \left(\frac{1}{1-k}\right)\langle x^* \rangle^{(3-k)}\sigma \sqrt{S} \, .
+\label{eq: SM approx second moment}
+\end{equation}
 
-The equilibrium production scales, at varying growth rate $r$,
-as $P(n^*)=s(n^*)^\beta$ as can be noted by Eq.~(\ref{eq: equilibrium single})
-for $r$ and then substituting it in the defining Eq.~(\ref{eq: production})
-or simply by considering the dynamical equation at stationarity.
-Notice that, if $s$ is varied instead, the exponent
-of dynamical and across-biomass-gradient production coincide.
+Now we want to write down the condition under which
+the average minus a number $\nu$ of standard deviations
+touches zero, or $x_0$ if the threshold is enforced.
+Let us consider this latter more general case first.
+The condition reads
+\begin{equation}
+    \langle x^*\rangle - \nu \ \textrm{std}(x^*)
+    = x_0 \, ,
+\label{eq: SM extinction condition}
+\end{equation}
+which, using Eq.~(\ref{eq: SM approx second moment}),
+becomes
+\begin{equation}
+    \langle x^*\rangle - \nu\left(\frac{1}{1-k}\right)\langle x^* \rangle^{(3-k)}\sigma \sqrt{S}
+    = x_0 \, .
+\end{equation}
+Substituting the expression for the average and solving for
+$\sigma\sqrt{S}$, we finally obtain
+\begin{equation}
+    \sigma\sqrt{S} = \frac{1-k}{\nu}\left[\left(\frac{ \mu S}{rx_0^{1-k}}\right)
+    -x_0\left(\frac{ \mu S}{rx_0^{1-k}}\right)^{(k-3)/(k-2)}\right] \, ,
+\end{equation}
+which reduces to the linear relation between the scaled parameters
+$\sigma\sqrt{S}$ and $\mu S$
+\begin{equation}
+    \sigma\sqrt{S} = \left(\frac{1-k}{\nu rx_0^{1-k}}\right)\mu S \, .
+\end{equation}
 
-In summary, for an environmental change that amount to a change in $r$, 
-the production across a biomass gradient 
-scales as $(n^*)^\beta$. In order for
-the stationary solution to be stable an exponent $\alpha<\beta$
-for the dynamical produciton is needed.
-Therefore, in order to have sublinear $P(n^*)$ across a biomass gradient,
-we need $\alpha<\beta<1$.
-If the increment of the equilibrium biomass density is due to decreasing $s$,
-equilibrium and dynamical production scale in the same way and in order to
-have sublinear $P(n^*)$ we need $\alpha<1$ with $\alpha<\beta$ for stability
-but no constraint on $\beta$. Either way we need $\alpha<1$.
+In order to avoid arbitrariness in the choice of $\nu$
+we can estimate an $S$ dependent value which accounts for the fact
+that the same equilibrium distribution but with more species
+(therefore the same point in the $\sigma\sqrt{S} - \mu S$ plane for higher $S$)
+implies a smaller sample minimum.
+One way to make analytical progress is to impose is to find the value
+$x_{\textrm{min}}$ for which the gaussian approximation for the distribution touches
+$1/S$. Tehre will be two points satisfying this conditions and we are interested
+in the lower one. The rationale behind this is that in a community
+of $S$ species, less then one on average will be below $x_{\textrm{min}}$.
+We have 
+\begin{equation}
+    \frac{1}{\sqrt{2\pi\textrm{std}(x^*)^2}}
+    \exp{\left[-\frac{(x_{\textrm{min}}-\langle x^* \rangle)^2}{2\textrm{std}(x^*)^2}\right]} = \frac{1}{S} \, ,
+\end{equation}
+which, solving for $x_{\textrm{min}}$, gives
+\begin{equation}
+    x_{\textrm{min}} = \langle x^* \rangle - \textrm{std}(x^*)\sqrt{2\ln\left(\frac{S}{\sqrt{2\pi\textrm{std}(x^*)^2}}\right)} \, .
+\end{equation}
+For large $S$ we can approximate the last equation by
+\begin{equation}
+    x_{\textrm{min}} = \langle x^* \rangle - \sqrt{2\ln S} \ \textrm{std}(x^*) \, ,
+\end{equation}
+from which we can read our estimate for $\nu$, comparing with Eq.~(\ref{eq: SM extinction condition}),
+i.e.
+\begin{equation}
+    \nu = \sqrt{2\ln S}\, .
+\end{equation}
 
-\subsection{Competitive community}
-With the help of the cavity solution we can extend the analysis above
-to the case of a competitive community.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1\textwidth]{fig/SM-extinction.pdf}
+    \caption{...}
+    \label{fig: SM extinction threshold}
+\end{figure}
 
-\section{Model construction and connection with data on productivity}
+In Fig.~(\ref{fig: SM extinction threshold}) ... 
+
+
+\subsection{GLV case}
+
+The same arguments apply to GLV, which, we recall, describes $S$ species evolving as
+\begin{equation}
+    \frac{dx_i}{dt} = rx_i(1-\frac{x_i}{K}) - x_i\sum_{j\neq i}A_{ij}x_j
+\end{equation}
+with $A_{ij}$ distributed with mean $\mu$ and standard deviation $\sigma$
+and we assume here $r$ and $K$ equal for all species,
+allowing to estimate the extinction threshold also in this case.
+
+The equilibrium distribution obtained through the cavity method is
+a truncated gaussian~[REFS] with average
+\begin{equation}
+    \langle x^* \rangle = \frac{K}{1+K\mu S/r} \, ,
+\end{equation}
+and standard deviation, written as a function of the average,
+\begin{equation}
+    \textrm{std}(x^*) = \frac{\sigma\sqrt{S}K\langle x^* \rangle}{\sqrt{1-\frac{K^2\sigma^2S}{r^2}}} \, ,
+\end{equation}
+plugging in the last two equations in the extinction 
+threshold condition~(\ref{eq: SM extinction condition}), for $x_0=0$
+leads to 
+\begin{eqnarray}
+    \sigma\sqrt{S} = \frac{r}{K\sqrt{\nu^2+1}} \, ,
+\end{eqnarray}
+which is an horizontal line in the parameter space 
+lower then the stability condition $\sigma\sqrt{S}$ and recovers it for $\nu=0$.
+
+\section{Model connection with data on productivity}
 Our model is informed by macroecological observations
 of biomass density production across major groups.
-In particular, we assume that the observations refers to the
-equilibrium production (see Sec.~(\ref{sec: On sublinear production})).
+In this section we attempt a closer connection to the data.
+
 We define our model in the following way
 \begin{equation}
-    \frac{d b_i}{dt} = \underbrace{r_ib_i\left(\frac{b_i}{\tilde{b}_i}\right)^{k -1}}_\text{Production}
-     - \overbrace{z_ib_i\sum_{j\neq i}A_{ij}b_j}^\text{Losses} \, ,
+    \frac{d b_i}{dt} = \underbrace{r_ib_i\left(\frac{b_i}{b_0}\right)^{k -1}\theta(b_i-b_0)}_\text{Production}
+     - \underbrace{b_i\sum_{j\neq i}A_{ij}b_j}_\text{Losses} \, ,
 \end{equation}
-where $\alpha<1$
+where $k<1$
 specify the intensity of sublinear dynamical scaling,
 the entries of the interaction matrix $A_{ij}$
 are randomly distributed with average $\mu$ and standard deviation $\sigma$,
 the $r_i$ are growth rates extracted from a distribution
 $P(r)$, the biomass density scale
-$\tilde{b}_i$ are in principle species dependent
-and we explicitely write a mortality rate $z_i$ in the losses whith the dimension
-of an inverse time. This is useful because we want to relate the characteristic time scale 
-of the dynamics a species (captured by
-the rates $r_i$ and $z_i$) to its mass which we call $m_i$.
+$b_0$.
 For the sake of clarity let us summarize the dimensionality of
 the several terms involved in the model
 \begin{equation}
-    [b_i] = [\tilde{b}_i] =  \frac{\textrm{mass}}{\textrm{area}} \ , \quad [r_i]=[z_i]=\frac{1}{\textrm{time}} \ , 
-    \quad [A_{ij}]=\frac{\textrm{area}}{\textrm{mass}} \ .
+    [b_i] = [b_0] =  \frac{\textrm{mass}}{\textrm{area}} \ ,
+    \quad [r_i]=\frac{1}{\textrm{time}} \ , 
+    \quad [A_{ij}]=\frac{\textrm{area}}{\textrm{mass}\times \textrm{time}} \ .
+\end{equation}
+The density biomass scale $b_0$ set the value at which the per capita
+growth rate is $r_i$. When we want to consider this value the
+maximum per capita growth rate for a given species we can
+consider $b_0$ as the minimal biomass density for a given species
+at which it is able to reproduce. 
+In this case we can impose that there is no growth
+for $b_i<b_0$ through a Heaviside function $\theta(b_i-b_0)$.
+
+Next we connect the model with the average body mass $m$ of a community. 
+The time scale of the problem are widely observed~\cite{Hatton2019}
+to scale with the body mass with an exponent $-1/4$.
+Therefore we assume that the average growth rate $\langle r \rangle$ for
+a community and the average interaction $\mu$ scale with the average body mass
+of the community to the $-1/4$, 
+i.e. $\langle r\rangle\sim m^{-1/4}$ and $\langle \mu \rangle\sim m^{-1/4}$.
+We have no reasons to assume a systematic variation of the ratio
+$\mu/\sigma$ with respect to the mass.
+We assume for simplicity that $b_0$ is species and mass independent. 
+We may invoke an ecological argument
+to justify this assumption, 
+indeed the observed biomass densities across major group
+have a mass independent lower bound (within two or three order of magnitude compared
+with the astronomical difference of nearly 20 order of magnitude in body mass).
+The population density scale for a given community of average mass
+$m$, $n_0:=(b_0)/m$, is then assumed to be inversely proportional to the mass.
+
+To compare this data with outcomes of the model
+we proceede as follows. We characterize a community type
+by an average mass, and therefore by an average growth rate $\langle r\rangle$,
+then we solve the model for different communities with same average $r$ but
+different $\mu$ and plot the resulting $\langle b^* \ g(b^*)\rangle$ vs 
+$\langle b^*\rangle$. In this process we keep the coefficient 
+of variation $\sigma/\mu$ constant.
+We keep $S$ constant and vary $\mu$ in a range which scales
+with $m$ in the same way that the average $r$ does across community type:
+within a community type we plot results for communities with 
+$\mu S\in(\langle r\rangle\mu_{\min}, \langle r\rangle\mu_{\max})$, with $\mu_{\min}$
+and $\mu_{\max}$ possibly mass dependent but with $\mu_{\min}<1$ and $\mu_{\max}>1$.
+In other words, in order to not introduce strong  biases towards specific
+masses, within community type and for every community type,
+we simulate different environment 
+going from a $\mu$ which is 
+less than $\langle r\rangle$ to one which is more than $\langle r\rangle$.
+We can summarize the assumptions in the following way.
+\\
+
+\textbf{Assumptions}
+\begin{itemize}
+    \item $b_0$ is body mass independent
+          and $n_0$ for a community is inversely proportional to the average
+          body mass $m$ of the community.
+    \item $ r \sim m^{-1/4}$ and characterize the typical growth rate
+          of a community type with the typical body mass $m$.
+    \item $\mu\sim m^{-1/4}$ for a given community type of average mass $m$.
+    \item To explore ecological variation among communities
+          of the same type we cosider different 
+          $\mu S\in(r\mu_{\min}, r\mu_{\max})$
+          with $\mu_{\min}<1$ and $\mu_{\max}>1$.
+    \item the coefficient of variation $\mu/\sigma$ does not vary systematically
+          both within and across community type.
+    \item $k<1$, in particular, in orderd to closely recover the observed pattern, $k\simeq3/4$
+\end{itemize}
+Each point in Fig.~\ref{fig: SM production} 
+correspond
+to an entire community, with on the $x$ axis the average biomass
+of the community $\langle b^* \rangle$ and on the $y$ axis the
+average equilibrium production of the community 
+$\langle b^* \ g(b^*)\rangle$. Within each community type the points follow
+a scaling law with exponent aroun $3/4$.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=.8\textwidth]{fig/SM-production.pdf}
+    \caption{\textcolor{red}{Make figure with precise values of r} 
+    Average equilibrium production $\langle b^* \ g(b^*)\rangle$ 
+    plotted versus average equilibrium biomass density $\langle b^*\rangle$.
+    Each dot represents simulations for a community of $S=50$ species, each color
+    correspond to a specific growth rate value: $r=10^2$ yellow, $r=10$ light blue,
+    $r = 1$ blue and $r= 10 ^{-1}$ red with the dimension of 1/y.
+    The exponent in the growht rate
+    is set as $k=3/4$ and the biomass scale is $b_0=10^{-2}$ (g/$\textrm{m}^2$),
+    the different points within a color (i.e. same $r$) correspond to 
+    $\mu S \in \{r10^2, r10, r, r^10^{-1}, r10^{-2}\}$. 
+    We set everywhere the coefficient of variation $\sigma/\mu=0.7$.
+    The dashed lines represent theoretical predictions from the
+    cavity solution.}
+    \label{fig: SM production}
+\end{figure}
+
+\subsection{Analytical prediction of average equilibrium production}
+In order to compute how the average production changes with respect to 
+the average biomass density in our context we can resosrt to the cavity
+solution computed in the previous section which \textit{mutatis mutandis}
+in terms of biomass density reads
+\begin{equation}
+    b^* = \left(\frac{\mu S \langle b^* \rangle + \sigma \sqrt{S\langle (b^*)^2\rangle} \eta}
+    {r \ b_0^{1-k}}\right)^{1/(k-1)} \, .
+    \label{eq: cavity solution biomass}
+\end{equation}
+At equilibrium we have
+\begin{equation}
+    b^*g(b^*)\equiv\underbrace{rb^*\left(\frac{b^*}{b_0}\right)^{k -1}}_\text{Production}
+    = \underbrace{b^*(\mu S \langle b^* \rangle + \sigma \sqrt{S\langle (b^*)^2\rangle} \eta)}_\text{Losses} \, ,
+\end{equation}
+therefore
+\begin{equation}
+    \langle b^*g(b^*)\rangle =  \mu S \langle b^* \rangle^2 + 
+    \sigma \sqrt{S\langle (b^*)^2\rangle} \langle b^*\eta\rangle \, .
+    \label{eq: formal for production}
+\end{equation}
+Invoking the gaussian approximation we know that the average reads
+\begin{equation}
+    \langle b^*\rangle = \left(\frac{\mu S}{r \ b_0^{1-k}}\right)^{1/(k-2)} \, ,
+\end{equation}
+which, if inverted for $\mu S$, gives
+\begin{equation}
+    \mu S = r \ b_0^{1-k} \langle b^*\rangle^{k-2} \, ,
+\end{equation}
+which imply that the first term on the r.h.s. of Eq.~(\ref{eq: formal for production}) is
+equal to $r \ b_0^{1-k}\langle b^* \rangle^k$.
+
+The second term is more involved. By writing explicitely the expression for
+$b^*$ it reads
+\begin{align}
+    \sigma \sqrt{S\langle (b^*)^2\rangle} \langle b^*\eta\rangle &= 
+    \sigma \sqrt{S\langle (b^*)^2\rangle}
+    \left\langle  \left(\frac{\mu S \langle b^* \rangle + \sigma \sqrt{S\langle (b^*)^2\rangle} \eta}
+    {r \ b_0^{1-k}}\right)^{1/(k-1)} \eta\right\rangle \nonumber \, ,\\
+    &= \sigma \sqrt{S\langle (b^*)^2\rangle} r^{1/(1-k)}b_0
+    \left\langle  \frac{\eta}{(\mu S \langle b^* \rangle + 
+    \sigma \sqrt{S\langle (b^*)^2\rangle} \eta)^{1/(1-k)}}\right\rangle \, .
+\end{align}
+The leading term in the denominator for large $S$ is
+$(\mu S \langle b^* \rangle)^{1/(1-k)}$, which for $k=3/4$ is proportional
+to $S^4$, while the others have a lower order dependence on $S$. Therefore
+if we approximate the whole denominator by $(\mu S \langle b^* \rangle)^{1/(1-k)}$ 
+and recall that $\langle \eta \rangle=0$ we can neglect this term
+and approximate the average production as
+\begin{equation}
+    \langle b^*g(b^*)\rangle \simeq r \ b_0^{1-k}\langle b^*\rangle^k \, .
 \end{equation}
 
-We want to encapsulate physiological properties in the
-rates $r_i$, $z_i$, and potentially $\tilde{b}_i$
-and the ecological variablity in the elements of
-the interaction matrix $A_{ij}$.
-The density biomass scale $\tilde{b}_i$ set the value at which the per capita
-growth rate is $r_i$. We also want to connect this quantity to the
-maximum per capita growth rate for a given species, we can therefore
-consider $\tilde{b}_i$ also as the minimal biomass density for a given species
-at which it is able to reproduce therefore we impose that there is no growth
-for $b_i<\tilde{b_i}$, but other choices of subminimal reproduction do not change
-qualitatively the result of the paper.
-Next we connect the model with the body-mass $m_i$ of a species. 
-The time scale of the problem are assumed/observed to scale with the body-mass
-with an exponent $-1/4$, i.e. $r_i\sim m_i^{-1/4}$ and $z_i\sim m_i^{-1/4}$.
-The population density scale
-for a given species is defined $\tilde{n}_i:=\tilde{b}_i/m_i$,
-Its inverse can be interpreted as the minimal area within which an individual
-of a certain species has to find another in order to be able to reproduce
-on average in its lifetime, if the area covered by an individual
-scales like $m_i$, then we can roughly consider $\tilde{b_i}\simeq\tilde{b}$ $\forall i$,
-i.e. species independent. We could also use an ecological argument
-to justify this, indeed the observed biomass densities across major group
-have a mass independent lower bound (within two or three order of magnitude compared
-with the astronomical difference of nearly 20 order of magnitude in body-mass).
+\subsection{Note on the origin of sublinear growth}
 
+Mechanistic justifications of the emergence
+of sublinear dynamical growth at the coarse level of description
+of the model studied in this work should be
+sought after. However our results suggest
+that mechanistic descriptions of community dynamics 
+leading to an effective sublinear growth 
+(or, more generally, to a relative change 
+of production with respect of population abundance
+lower than the relative change of losses,
+see Sec.~\ref{sec: complexity-stability regimes})
+will be qualitatively characterized by a positive
+correlation beteween stability and complexity.
+
+The macroecological data which inspired the model studied in this work
+have mixed origin, some can be directely connected with
+dynamical production and other are cross-ecosystem patterns.
+More precise and systematic observations of the former 
+and validation of the latter at the ecosystem level
+with temporal data are needed 
+(see Ref.~\cite{Barbier2021} for an example of a macroecologially motivated
+model and subsequent discussion about within ecosystem validation).
+\\\\
+
+\textbf{Among the task that future theoretical work should aim at, we suggest}
+\begin{itemize}
+    \item Building a mechanistic understanding of the emergence
+          of sublinear dynamical scaling from realistic models.
+    \item Connecting the abundance prediction from community
+          models with macroecological patterns related to abundance.
+          In particular when we go from within community description
+          to cross-community.
+    \item Exploring in detail possibilities different from 
+          sublinear dynamical scaling to explain cross-ecosystem 
+          sublinear scaling and test indipendent predicrtions.
+\end{itemize}
+
+\textbf{Future urgent experimental and field research include}
+\begin{itemize}
+    \item Collecting temporal data within ecosystems and devise ways 
+          to estimate the population abundance or density dependence
+          on production.
+    \item Extending the spectrum of data available in order to 
+          further validate the evidence of sublinear production.
+\end{itemize} 
 
 \section{Macroecological laws}
-Intro \dots
+In this section we compare macroecological patterns
+with prediction of our model specifying in which way
+we construct the observable to compare and under which assumptions
+in addtion to the ones described in the construction of the model.
 
 \subsection{Species abundance distribution}
+The species abundance distribution distribution within a community
+is often well fitted by a log-normal distribution.
+In order to recover this pattern for the abundance density $n_i$ 
+with our model we assume that
+the growth rates $r_i$ follows a log-normal distribution.
+\\
+
+\textbf{Assumptions}
+\begin{itemize}
+    \item $\ln r\sim\mathcal{N} (\mu_r,\sigma_r)$.
+\end{itemize}
+
+\textbf{Predictions}
+\begin{itemize}
+    \item We predict that $n^*$ roughly follows a 
+    log-normal distribution as well and, if we consider $k=3/4$,
+    it has shape parameter 4 times larger than the one for $r$.
+\end{itemize}
+
+We can work out an exact calculation in the case of uniform interactions (i.e. $\sigma\to0$),
+which works well also for small but finite $\sigma$.
+In this case the cavity solution for $n^*$ (Eq.~(\ref{eq: cavity solution})) reads
+\begin{equation}
+    n^* = \left(\frac{\mu S \langle n^* \rangle}
+    {r \ n_0^{1-k}}\right)^{1/(k-1)} \, ,
+\end{equation}
+where we recall that consider for simplicity that the scale $n_0$ is the same for all the species in
+the community and set it to unity, $n_0=1$, in the following.
+
+We can obtain the probability distribution for $n^*$ by pushing forward the one for $r$,
+$P(n^*)=P(r(n^*))|dr/dn^*|$. Given that $r(n^*)$ reads
+\begin{equation}
+    r=\frac{(n^*)^{k-1}}{\mu S \langle n^* \rangle} \, ,
+\end{equation}
+and
+\begin{equation}
+    \left|\frac{dr}{dn^*}\right| = \frac{(1-k)(n^*)^{k-2}}{\mu S \langle n^* \rangle} \, ,
+\end{equation}
+we obtain that $n^*$ is as well a log-normal random variable
+\begin{equation}
+    \ln n^*\sim\mathcal N (\mu_{n^*}, \sigma_{n^*}) \, ,
+    \label{eq: cavity for lognormal r}
+\end{equation}
+with 
+\begin{align}
+    \mu_{n^*} &= \frac{\mu_r - \ln{(\mu S \langle n^* \rangle)}}{(1-k)} \, , \\
+    \sigma_{n^*} &= \frac{\sigma_r}{(1-k)} \, .
+\end{align}
+Notice that the scale parameter is amplified by a factor $1/(1-k)$, which in the
+case of $k\simeq3/4$ correspond to a species abundance distribution four times
+wider than the growth rate distribution.
+
+In this case we only need to solve a self-consistent equation 
+for the average $\langle n^* \rangle$ to complete the cavity solution.
+This can be done analytically because the expression of the average
+for a log-normal distribution is known
+\begin{equation}
+    \langle n^* \rangle = \exp{\left(\mu_{n^*}+\frac{\sigma_{n^*}^2}{2}\right)} \, ,
+\end{equation}
+and we have
+\begin{equation}
+    \langle n^* \rangle = (\mu S)^{(k-2)}
+    \exp{\left[\frac{2\mu_r(1-k)+\sigma_r^2}{2(1-k)(2-k)}\right]} \, .
+\end{equation}
+
+In Fig.~\ref{fig: SM species abundance lognormal} the cavity results are compared with simulations showing
+perfect agreement in the case $\sigma\to0$ (left panel)
+and good agreement also in the case of finite $\sigma$ (right panel).
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1\textwidth]{fig/SM-species-abd.pdf}
+    \caption{Cavity solution compared to simulations for log-normal distribution of growth rates $r$, 
+    $\ln{P(r)}=\mathcal{N} (\mu_r,\sigma_r)$, with $\mu_r=1$ and $\sigma_r=1/10$
+    and a pool of $S=500$ species with $\mu=10^{-3}$, $k=3/4$ and $\sigma\to0$ (left panel)
+    while $\sigma=0.7\mu$ (right panel).}
+    \label{fig: SM species abundance lognormal}
+\end{figure}
+
+In Fig.~\ref{fig: SM species abundance realistic} we report the abundance distributions
+for the four community types as parametrized in the model construction (details in caption).
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=.8\textwidth]{fig/SM-abundance-realistic2.pdf}
+    \caption{Abundance distribution of species resulting from the dynamics
+    for the four community types as parametrized in the model 
+    construction see (Fig.~\ref{fig: SM production}), but with $S=500$ species
+    to obtain better statistics. In particular, in every panels, 
+    we set $\mu S = \langle r \rangle $ and $\sigma/\mu=0.7 $ and $r$
+    is lognormally distributed with mode chose as 
+    $\exp(\mu_r)=\langle r \rangle B_0^{1-k}$ specific for each color
+    as per model construction and shape parameter $\sigma_r = 0.16$
+    for red, 0.38 for blue, 0.54 for light blue and 0.34 for yellow.
+    The dashed lines correspond to the cavity solution 
+    in Eq.~(\ref{eq: cavity for lognormal r}) 
+    which well compare with simulations.}
+    \label{fig: SM species abundance realistic}
+\end{figure}
 
 \subsection{Mean-variance scaling}
+The variance of fluctuations in biomass densities for time series
+of different species scale with mean biomass density with an exponent
+from $3/2$ to 2.
+We consider again a log-normal distribution for $r$
+and that the loss term of our model exhibits variation in mortality
+(e.g. $\mu$ varies).
+\\
+
+\textbf{Assumptions}
+\begin{itemize}
+    \item $\ln r\sim\mathcal{N} (\mu_r,\sigma_r)$ (only needed for analytical results).
+    \item $\mu$ varies (in the case of uniform $r$, the ratio $\mu/\sigma$ should be constant).
+\end{itemize}
+
+\textbf{Predictions}
+\begin{itemize}
+    \item Taylor's law.
+\end{itemize}
+
+We consider again the cavity result in the limit $\sigma\to0$
+which, in the case of $\ln r\sim \mathcal N (\mu_r, \sigma_r)$,
+gives $\ln b^*\sim\mathcal N (\mu_{b^*}, \sigma_{b^*})$ with
+\begin{align}
+    \mu_{b^*} &= \frac{\mu_r-\ln{(\mu S \langle b^* \rangle)}}{(1-k)} \, , \\
+    \sigma_{b^*} &= \frac{\sigma_r}{(1-k)} \, .
+\end{align}
+By varying $\mu$ only the scale parameter $\mu_{b^*}$ is modified.
+Therefore if we consider the mean and variace of the log-normal distribution
+\begin{align}
+    \langle b^* \rangle &= \exp{\left(\mu_{b^*}+\frac{\sigma_{b^*}^2}{2}\right)} \, , \\
+    \textrm{var}(b^*)&=  
+    \left(\exp[\sigma_{b^*}^2]-1\right)\exp{\left(2\mu_{b^*}+\sigma_{b^*}^2\right)}\, , \\
+\end{align}
+it is straightforward to realize that the mean is proportional to $\exp(\mu_{b^*})$, while
+the variance to $\exp(2\mu_{b^*})$, therefore
+\begin{equation}
+    \textrm{var}(b^*) \propto  \langle b^* \rangle^2 \, ,
+\end{equation}
+i.e., Taylor's law.
+In Fig.~\ref{fig: SM Taylor's law} we report a comparison 
+with simulations with lognormally distributed $r$ and $\sigma\to0$, 
+lognormally distribute $r$ and finite $\sigma=\mu/10$, to show
+that the results hold in this case, and, even if in this case we don't have analytical results 
+(\textcolor{red}{I manage to obtain one, to be added}),
+also with uniform $r=1$ and 
+finite $\sigma=\mu/10$.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=.8\textwidth]{fig/SM-taylor-complete.pdf}
+    \caption{Variance of the species biomass density distribution plotted against the mean,
+    each dot is a community with a specific $\mu\in\{\langle r\rangle10^{-2},\langle r\rangle10^{2}\}$,    
+    whith $S=10^3$, $k=3/4$ and black dots correspond to $\ln{P(r)}=\mathcal{N} (\mu_r,\sigma_r)$, 
+    with $\mu_r=1$, $\sigma_r=1/10$ and $\sigma\to0$, dark gray to $\sigma=\mu/10$ with the same distribution
+    for $r$ and light gray dots correspond to uniform $r=1$ and $\sigma=\mu/10$.}
+    \label{fig: SM Taylor's law}
+\end{figure}
+
+In Fig.~\ref{fig: SM Taylor's law realistic} we report variance vs.
+average for the communitites parametrized as in model construction (Fig.~\ref{fig: SM production}),
+finding a good agreement with Taylor's law, see caption for details.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=.8\textwidth]{fig/SM-taylor-realistic.pdf}
+    \caption{\textcolor{red}{Make figure with precise values of r} Variance of the species biomass density distribution plotted against the mean,
+    each dot is a community is parametrized as in the model construction (see
+    caption of Fig.~\ref{fig: SM production}).}
+    \label{fig: SM Taylor's law realistic}
+\end{figure}
 
 \subsection{Size-density scaling}
+The species-level relation of population density vs. body mass
+is nearly inversely proportional across major groups.
+By relying on no further assumptions then in those used
+to connect the model with data on production we predict
+a size-density scaling with exponent -1.
 
-\subsection{Size-spectrum scaling}
+\textbf{Assumptions}
+\begin{itemize}
+    \item Same as for the connection of the model with data on production.
+\end{itemize}
 
-\section{Stability in parameter space}
+\textbf{Predictions}
+\begin{itemize}
+    \item Size-density scaling with exponent -1.
+\end{itemize}
 
-\section{Simulations}
-
-\begin{comment} 
-\section{General production with GLV interactions}
-Consider the system of $S$ species
+We start from the cavity solution for the equilibrium biomass density $b_0$
 \begin{equation}
-    \frac{dn_i}{dt} = P(n_i) - n_i\sum_{j\neq i}A_{ij}n_j \, ,
+    b^* = \left(\frac{\mu S \langle b^* \rangle + \sigma \sqrt{S\langle (b^*)^2\rangle} \eta}
+    {r \ b_0^{1-k}}\right)^{1/(k-1)} \, ,
 \end{equation}
-where the summation runs over all the species and we leave the production function generic
-and $A$ is a matrix with zero diagonal and off-diagonal elements gaussianly
-ditrubuted with mean $\mu$ and standard deviation $\sigma$.
-The community matrix reads in this case
+where we consider $r$ uniform and different for each community type as in the model
+connection with data on production.
+Each community is characterized by an average mass $m$, and, given that we consider
+$\mu S \propto r$ (it varies in a range of two order of magnitude above and below $r$),
+it cancels out with $r$ leaving no mass dependence.
+Therefore the average numerical densities $\langle n^*\rangle$ 
+of different community types will
+be inversely proportional to their mass $m$ with a spread on the $y$ axes
+due to different $(\mu, \sigma)$
 \begin{equation}
-    C = -D(n^*)A - D(P(n^*)/n^*-P'(n^*)) \, ,
+    \langle n^*\rangle \sim m^{-1} \, .
 \end{equation}
-where the notation $D(x)$ stands for a diagonal matrix filled 
-with the components of the vector
-$x$ and $P(n^*)=(P(n_1^*), ..., P(n_S^*))$ and $P'(n^*)=(dP(n_1^*)/dn_1^*, ..., dP(n_S^*)/dn_S^*)$.
+In Fig.~\ref{fig: SM size-density scaling} we report the average numerical density vs. 
+body mass for the different community types using the same 
+parameters from Fig.~\ref{fig: SM production}.
 
-We have instability when
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=.8\textwidth]{fig/SM-size-density-scaling.pdf}
+    \caption{\textcolor{red}{Make figure with precise values of r} Numerical density distribution vs. body mass for each community 
+     type parametrized as in the model construction (Fig.~\ref{fig: SM production}).}
+    \label{fig: SM size-density scaling}
+\end{figure}
+
+\newpage
+
+\section{Back up sections}
+
+\subsection{Generalized Lotka-Volterra with generic production}
+\textcolor{red}{Maybe take out.}
+
+Consider a competitive community of $S$ species
+defined by the following dynamics for the population abundances
 \begin{equation}
-    \sum_i \frac{1}{|\mu -P(n_i^*)/(n_i^*)^2+P'(n_i^*)/n_i^*|^2}\geq 1/\sigma^2 \, .
+    \frac{dx_i}{dt}=g(x_i)-x_i\sum_{j\neq i}A_{ij}x_j \, ,
 \end{equation}
-\end{comment}
+where the $A_{ij}$ are extracted from a distribution
+with mean $\mu>0$ and standard deviation $\sigma$ and
+the production term $g_i(x_i)$ may in principle include
+self-regulation terms which are only dependent on species $i$
+and parameters typical of species $i$.
+
+If the equilibrium is feasible, denoting $x_i^*$ the equilibrium values,
+we have
+\begin{equation}
+    g_i(x_i^*)=x_i^*\sum_{j\neq i}A_{ij}x_j^* \, .
+\end{equation}
+The jacobian evaluated at equilibrium is formally
+\begin{equation}
+    J_{ij}\Big{|}_{\bf{x}=\bf{x}^*} = -x_i^*A_{ij} \, ,
+\end{equation}
+\begin{equation}
+    J_{ii}\Big{|}_{\bf{x}=\bf{x}^*} =  g_i'(x_i^*)-\frac{g_i(x_i^*)}{x_i^*}\, ,
+\end{equation}
+where $g_i'(x_i^*)$ stands for $|d g_i(x_i)/d x_i|_{x_i=x_i^*}$ 
+and we used the equilibrium relation.
+
+In order to make some analytical progress let us focus on the case
+of uniform interactions ($\sigma\to0$) and production
+with same parameters for every species, i.e. $g_i=g$ $\forall i$.
+Then every species have the same equilibrium value $x_i^*=x^*$
+$\forall i$ and we can write down the equilibrium relation
+\begin{equation}
+    g(x^*)=(S-1)\mu (x^*)^2 \, ,
+\end{equation}
+and the jacobian at equilibrium
+\begin{equation}
+    J_{ij}\Big{|}_{x=x^*} = -x^*\mu \, ,
+\end{equation}
+\begin{equation}
+    J_{ii}\Big{|}_{x=x^*} =  g'(x^*)-\frac{g(x^*)}{x^*}\, .
+\end{equation}
+The largest eigenvalue correspond to
+\begin{equation}
+    \lambda_{\max}=J_{ii}\Big{|}_{x=x^*}-J_{ij}\Big{|}_{x=x^*} \, ,
+\end{equation}
+therefore the stability condition reads
+\begin{equation}
+    g'(x^*)- \frac{g(x^*)}{x^*} + x^*\mu < 0 \, .
+\end{equation}
+By exploiting the equilibrium relation we can recast the last
+inequality as
+\begin{equation}
+    g'(x^*)- \frac{g(x^*)}{x^*} + \frac{g(x^*)}{x^*(S-1)} < 0 \, ,
+\end{equation}
+therefore giving the general formal stability condition in terms
+of production at equilibrium and equilibrium density
+\begin{equation}
+    g'(x^*) < \frac{g(x^*)}{x^*}\left(1 - \frac{1}{S-1}\right) \, ,
+\end{equation}
+which for $S\to\infty$ can be approximated by 
+\begin{equation}
+    g'(x^*) < \frac{g(x^*)}{x^*} \, .
+\end{equation}
+This last stability condition is quite general and, exploiting the trivial identity
+$1=dx/dx|_{x=x^*}=:(x^*)'$, it can be written as
+\begin{equation}
+    \frac{g'(x^*)}{g(x^*)} < \frac{(x^*)'}{x^*}\, ,
+\end{equation}
+which means that the relative change in growth should be less than the relative
+change in abundance itself.
+
+Logistic and sublinear cases are recovered by substitutig resepctively
+$g(x)=x(1-x/K)$ and $g(x)=x^k$.
 
 \newpage
 

@@ -1,0 +1,190 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage[margin = 3cm]{geometry}
+\usepackage[safeinputenc, maxnames=10, backend = biber, sorting=none, url = false, doi = false, isbn = false, citestyle = numeric-comp]{biblatex}
+\AtEveryBibitem{\clearlist{language}}
+\AtEveryBibitem{\clearfield{note}}
+\AtEveryBibitem{\clearfield{month}}
+\AtEveryBibitem{\clearfield{publisher}}
+\addbibresource{references.bib}
+\renewbibmacro{in:}{}
+\usepackage{colortbl}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+
+\newcommand{\inter}{\textrm{inter}}
+\newcommand{\intra}{\textrm{intra}}
+
+\title{Supplementary Material for\\\vspace{1cm} ``Diversity begets stability: sublinear growth scaling and competitive coexistence across ecosystems''}
+\author{Ian A. Hatton \and Onofrio Mazzarisi \and Ada Altieri \and Matthieu Barbier \and Matteo Smerlak}
+
+\begin{document}
+\appendix
+
+\maketitle
+
+\section{Conditions for stable coexistence in competitive communities}
+
+Here we provide more details on the analytical results discussed in the main text. 
+
+\subsection{Homogeneous communities: stability criteria}\label{homogeneous-stability}
+
+Let us model the competition of $S$ species with abundances $x_i$ (either numerical density $x_i$ or biomass density $B_i$) in terms of \emph{per capita} growth rates, as follows
+\begin{equation}\label{model}
+\frac{1}{x_i}\frac{dx_i}{dt} = \inter_i(x_i) + \intra_i(\mathbf x_{-i})\equiv f_i(\mathbf x), \quad 1\leq i\leq S .
+\end{equation}
+Here $\inter_i$ represents intra-specific effects which only depend on the abundance of population $i$, and  $\intra_i$ represents inter-specific effects which only depend on the abundances of its competitors, collectively denoted $\mathbf x_{-i}\equiv (x_j)_{j \neq i}$. Because competition can only reduce the growth rate of a population, we assume that both terms are monotonically decreasing functions of their arguments. 
+
+Following standard terminology, the system may be called \emph{feasible} if it admits an equilibrium point $\mathbf x^*$ whose components $x_i$ are all positive. Further, an equilibrium point $\mathbf x^*$ is \emph{(locally) stable} if all eigenvalues of the Jacobian of $f$ evaluated at $\mathbf x^*$ (also known as the `community matrix' $C^*$ of the system) have negative real parts. 
+The community matrix has diagonal and off-diagonal elements, respectively 
+\begin{equation}\label{community-matrix}
+    C^*_{ii} = x_i^*\, \frac{\partial \intra_i}{\partial x_i}(x_i^*), \quad C^*_{ij} = x_i^*\, \frac{\partial \inter_i}{\partial x_j}(\mathbf x_{-i}^*).
+\end{equation}
+
+Consider the case species are indistinguishable and interactions are uniform ($A_{ij} = A>0$ for $i\neq j$). In that case all species have equal abundance $x^*$ at equilibrium, and moreover the eigenvalue $\lambda$ of the Jacobian $J^*$ with largest real part is given by
+\begin{equation}
+    \lambda = x^* \left(\frac{\partial \intra}{\partial x_i}(x^*) - \frac{\partial \inter}{\partial x_j}(\mathbf x^*)\right). 
+\end{equation}
+From this expression derives a general rule of thumb concerning the stability of competitive communities: a multi-species equilibrium can only be stable if \emph{intra-specific regulation is more strongly density-dependent than inter-specific competition}. 
+
+For the model introduced in the main text, we have $\intra(x_i) = rg(x_i) -z$ and $\inter(x_{-i}) = -\sum_{j\neq i}A_{ij} x_j$. We can therefore write the local stability condition as
+\begin{equation}
+    rg'(x^*) < - A.
+\end{equation}
+In the logistic case we have $g'(x^*) = -1/K$, hence stability requires $A < r/K$: inter-specific interactions must be weaker than intra-specific interactions. In the sublinear model, on the other hand, we have $g'(x^*) = (k-1)g(x^*)/x^*$, and using the equilibrium condition $rg(x^*) - z = (S-1)Ax^*$, we arrive at $(1-k)[(S-1)A + z/x^*] > A$. This condition is fulfilled whenever 
+\begin{equation}\label{conditionS}
+    S > 1 + \frac{1}{1-k}.
+\end{equation}
+(When $z > 0$ this condition is sufficient but not necessary for local stability.) Eq. \eqref{conditionS} shows that, at least in homogeneous communities, increasing diversity enhances the local stability of multi-species equilibria. 
+
+\subsection{Homogeneous communities: May vs. anti-May behavior}
+
+In this section we show that the GLV model lies on the boundary between two phases: one with May behavior (diversity begets instability), and one with anti-May behavior (diversity begets stability). To this aim we consider a variant of the competition model of the form
+\begin{equation}
+    \frac{1}{x_i}\frac{dx_i}{dt} = x_i^k - \sum_{j = 1}^Sa_{ij}x_i^a x_j^b = x_i^k - A_{ii} x_i^{a+b}- \sum_{j \neq i}a_{ij}x_i^a x_j^b.
+\end{equation}
+In this formulation the GLV model corresponds to $k = a = b = 1$ and the sublinear model to $k < 1$ and $a = b = 1$. We compute the Jacobian matrix elements:
+\begin{eqnarray}
+    C_{ii} &=& kx_i^{k-1} - A_{ii} (a+b) x^{a+b-1} - a\sum_{j \neq i}A_{ij}x_i^{a-1} x_j^b, \\  
+    C_{ij} &=& -b\sum_{j \neq i}A_{ij}x_i^{a} x_j^{b-1}.
+\end{eqnarray}
+If we assume as before a homogenenous community with identical interaction strengths (denoted $A_{ii} = A_{\textrm{s}}$, $A_{ij} = A_{\textrm{c}}$), the equilibrium abundance reads
+\begin{equation}
+    x^* = [A_{\textrm{s}} + (S-1)A_{\textrm{c}}]^{1/(k-a-b)} 
+\end{equation}
+and the corresponding community matrix
+\begin{eqnarray}
+    C_{ii} &=& k(x^*)^{k-1} - [(a+b) A_{\textrm{s}} + a(S-1)A_{\textrm{c}}](x^*)^{a+b-1}, \nonumber \\  
+    C_{ij} &=& -bA(x^*)^{a+b-1} \quad\quad \textrm{for}\ i \neq j.\nonumber
+\end{eqnarray}
+The largest eigenvalue of $C^*$ is given by
+\begin{eqnarray}
+    \lambda &=& C^*_{ii} - C^*_{ij}\nonumber\\
+     &=& k(x^*)^{k-1} - [(a+b)A_{\textrm{s}} +(a(S-1)-b)A_{\textrm{c}}](x^*)^{a+b-1}\nonumber\\
+    & = & \left(k - \frac{(a+b)A_{\textrm{s}} +(a(S-1)-b)A_{\textrm{c}}}{A_{\textrm{s}} + (S-1)A_{\textrm{c}}}\right)(x^*)^{k-1}.\nonumber
+\end{eqnarray}
+The local stability condition is, therefore, 
+\begin{equation}
+    (S-1)(k-a) < (a+b - k)\alpha - b \quad \textrm{with}\quad \alpha \equiv A_{\textrm{s}}/A_{\textrm{c}}. 
+\end{equation}
+We have three possibilities:
+\begin{align}
+    S &> 1 + \frac{(a+b - k)\alpha - b}{k-a} &\textrm{if}\quad k < a,\nonumber\\
+    S &< 1 + \frac{(a+b - k)\alpha - b}{k-a} &\textrm{if}\quad k > a,\nonumber\\
+    \alpha &> 1 &\textrm{if}\quad k = a.\nonumber
+\end{align}
+A series of comments are in order:
+\begin{itemize}
+    \item Depending on $k$ and $a$ we have two regimes: one in which increasing $S$ hinders stability ($k > a$, a `May' phase), and one in which increasing $S$ enhances stability ($k < a$, an `anti-May' phase). Notably this transition is independent from $b$, indicating that only the relative density dependence of self- and cross-regulation in the \emph{per capita} growth of a population is relevant, and not the form of the dependence on other species' abundance in this \emph{per capita} growth. 
+    \item The critical case ($k=a$) recovers the usual stability condition for the homogeneous GLV model ($b=1$) and generalizes it for general interactions ($b\neq 1$).
+    \item For $a = b = 1$ and  $ A_{\textrm{s}}=0$ we recover the result \eqref{conditionS} obtained in the previous section. 
+\end{itemize}
+
+These results are obtained in the special case where interactions are homogenous (standard deviation $\sigma = 0$). When $\sigma > 0$, the GLV model falls squarely into the May phase, as illustrated e.g. by Fig. 3A of the main text. 
+
+\subsection{Random communities: DMFT and cavity solution}
+
+
+Dynamical mean field theory (DMFT) and the cavity method have been used to study the GLV model in the large diversity limit ($S\to\infty$) by several authors [REFS]. Here we show how to derive the derive analytical results in the sublinear model using these techniques.
+
+\subsubsection{Equilibrium distribution}\label{cavity}
+
+@ONOFRIO
+
+\subsubsection{Stability condition}
+
+Ahmadian \emph{et al.} [AHMADIAN] consider large matrices of the form $M + LJR$, where $M$,  $L$ and $R$ are deterministic matrices, and $J$ is a random matrix with i.i.d. coefficients with zero mean and variance $\sigma^2$. Generalizing the classical `circular law', they show that the spectrum of such matrices is contained withing the region of the complex plane defined by 
+\begin{equation}
+    \textrm{Tr}[(M_\zeta M_\zeta^\dagger)^{-1}]\geq 1/\sigma^2 \quad \textrm{where}\ M_\zeta = L^{-1}(\zeta I - M)R^{-1}, 
+\end{equation}
+where $\textrm{Tr}$ denotes the trace, dagger the Hermitian conjugate, and $\zeta\in\mathbb{C}$. In the special case where $L$, $R$ and $M$ are diagonal, this condition reduces to
+\begin{equation}
+    \sum_{i=1}^S\frac{(L_{i}R_{i})^2}{ \vert \zeta - M_{i}\vert^2 }\geq 1/\sigma^2
+\end{equation}
+for matrices of size $S$. 
+
+Following Stone [STONE], we now apply this result to generalize the stability condition to random interactions $A_{ij}$. From \eqref{community-matrix} we can write the community matrix as
+\begin{equation}
+    C^* = -\textrm{diag}(\mathbf x^*)[A + \textrm{diag}(\mathbf r  g'( \mathbf x^*))]\,
+\end{equation}
+where the product of vectors is understood component-wise. Denoting $\mathbf{1}$ the rank-one matrix with all entries equal to $1$, we can write $A = \mu \mathbf{1} - \mu I + J$ with $J$ as above, hence $C^*$ has the form $M + LJR$ with  
+$L = -\textrm{diag}(\mathbf x^*)$, $R = I$ and $M = \textrm{diag}(\mathbf x^*)[\mu I - \textrm{diag}(\mathbf r g'(\mathbf x^*))]$. Thus, we have that the eigenvalues of the community matrix $C^*$ must lie within the domain 
+\begin{equation}
+    \sum_{i=1}^S\, \frac{(x_i^*)^2}{\vert z -x_i^*[\mu - r_ig'(x_i^*)]\vert ^2}\geq 1/\sigma^2. 
+\end{equation} 
+This domain first touches the right half-plane at $z = 0$, hence stability of $C^*$ requires   
+\begin{equation}\label{random-stability}
+    \sum_{i=1}^S\, [\mu - r_ig'(x_i^*)]^{-2}< \sigma^{-2}. 
+\end{equation}
+
+In the logistic model, we have $g'(x^*_i) = -1/K_i$, hence \eqref{random-stability} becomes $\sum_i (\mu - r_i/K_i)^{-2} < \sigma^{-2}$. When growth rates and carrying capacities are all equal, this is just the May condition $\sigma\sqrt{S} + \mu < r/K$, interpreted as stating that interaction strength $(\mu, \sigma)$ and diversity $S$ must be small compared to self-regulation $r/K$ to allow for stable coexistence.
+
+By contrast, in the sublinear model (defined by $g(x) = (x/x_0)^{k-1}$), we have $g'(x) = (k-1) x^{k-2}/x_0^{k-1}$, hence \eqref{random-stability} reads
+\begin{equation}
+    \sum_{i=1}^S\, [\mu + (1-k) r_i (x_i^*)^{k-2}/x_0^{k-1}]^{-2}< \sigma^{-2}.
+\end{equation} 
+Making use of the cavity solution $P(x^*)$ obtained in sec. \ref{cavity}, we can write this condition as 
+\begin{equation}
+    S \int dP(r, x^*)[\mu + (1-k) r (x^*)^{k-2}/x_0^{k-1}]^{-2}< \sigma^{-2}
+\end{equation}
+TBC
+
+\subsection{Random communities: replica solution}
+
+In this section we provide an alternative derivation of the stability condition for random communities based on the replica method, borrowed from spin-glass and recently applied to ecological dynamics \cite{biroli2018marginally, altieri2021properties}. This alternative derivation requires two additional assumptions: the interaction matrix $A_{ij}$ must be symmetric ($A_{ij} = A_{ji}$), an sublinear growth must be stabilized by a finite carrying capacity $K$, viz. $g(x) = (x/x_0)^k - x/K$. For simplicity we take $r=1$ and $K = x_0 = 1$ in the following.
+
+Under these assumptions, the evolution of species abundances $x_i$ follows the euqation
+\begin{equation}
+    \frac{d x_i}{dt}= -x_i \left[V_i'(x_i) +\sum_{j \neq i} A_{ij} x_j \right] 
+        \label{dynamical_eq}
+\end{equation}
+where the one-species potential $V(x_i)$ represents self-regulation, \emph{i.e.}
+\begin{equation}
+  V_i(x_i)= -\frac{x_i^k}{k}  +\frac{x_i^2}{2}.
+\label{quadratic_potential}
+\end{equation}
+
+
+@ADA: replica calculation below, with notations consistent with main test (for instance $\mu$ and $\sigma$ are *not* rescaled). 
+
+
+\section{Linking dynamical theory with macroecological laws}
+This section expands on the way we parametrize the sublinear model using individual-level allometries to recover various macroecological patterns. 
+
+@ONOFRIO
+
+\subsection{Production-biomass scaling}
+\subsection{Species abundance distribution}
+\subsection{Mean-variance scaling}
+\subsection{Size-density scaling}
+\subsection{Size spectra}
+
+\printbibliography
+\end{document}
+
+

@@ -4,19 +4,19 @@ using LinearAlgebra
 
 
 function production(x, p)
-        return (x > p[:b0]*p[:threshold] ? x^p[:k] : 0) - x^2/p[:K]
+        return (x > p[:b0]*p[:threshold] ? x^p[:k] : 0)
 end
 function dproduction(x, p)
-    return (x > p[:b0]*p[:threshold] ? p[:k]*x^(p[:k]-1) : 0) - 2x/p[:K]
+    return (x > p[:b0]*p[:threshold] ? p[:k]*x^(p[:k]-1) : 0)
 end
 
 function F!(f, x, p)
-    f .= p[:r]*p[:b0]^(1-p[:k]).*production.(ppart.(x), Ref(p)) .- p[:z]*x .- x.*(p[:a]*x) .+ p[:λ]
+    f .= p[:r]*p[:b0]^(1 - p[:k]).*(production.(ppart.(x), Ref(p)) .- x.^2 ./p[:K]) .- p[:z]*x .- x.*(p[:a]*x) .+ p[:λ]
 end
 
 function J!(j, x, p)
     j = - x.*p[:a]
-    j[diagind(j)] .= p[:r]*p[:b0]^(1-p[:k]).*dproduction.(x, Ref(p)) .- 2x./p[:K]^(2 - p[:k]) .-p[:z] .- p[:a]*x
+    j[diagind(j)] .= p[:r]*p[:b0]^(1-p[:k]).*(dproduction.(x, Ref(p)) .- 2*x ./p[:K]) .-p[:z] .- p[:a]*x
 
 
     # above_threshold = x .> p[:b0]
@@ -26,7 +26,7 @@ end
 
 ## solving
 
-MAX_TIME = 1e3
+MAX_TIME = 1e4
 MAX_ABUNDANCE = 1e5
 
 blowup() = DiscreteCallback((u, t, integrator) -> maximum(u) > MAX_ABUNDANCE, terminate!)
@@ -43,7 +43,7 @@ function evolve!(p; trajectory = false)
             (f, x, p, t) -> F!(f, x, p); #in-place F faster
             jac = (j, x, p, t) -> J!(j, x, p) #specify jacobian speeds things up
             ),
-            fill(2., p[:S]), #initial condition
+            fill(.1, p[:S]), #initial condition
             (0., MAX_TIME),
             p
         )
@@ -87,7 +87,7 @@ function equilibria!(p)
                 p
             )
         sol = solve(pb, 
-            callback = CallbackSet(TerminateSteadyState(1e-5), blowup()), 
+            callback = CallbackSet(TerminateSteadyState(1e-3), blowup()), 
             save_on = false #don't save whole trajectory, only endpoint
             )
         push!(equilibria, sol.u[end])

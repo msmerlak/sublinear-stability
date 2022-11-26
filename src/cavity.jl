@@ -126,7 +126,7 @@ function σ_crit(p;
     e2_init = (p[:scaled] ? 1/p[:μ] : 1/p[:μ]/p[:S]), #initial guess for e1_n
     σc_init = (p[:scaled] ? .1*p[:μ] : .1*p[:μ]/p[:S]), #initial guess for σ_c
     ϵ = 1e-5, #Hadamard small parametrs for partie finie
-    n_max = 1e3, #upper bound for integration
+    n_max = 1e2, #upper bound for integration
     n_min = p[:b0]*p[:threshold], #lower bound for integration
     )
 
@@ -147,8 +147,8 @@ function σ_crit(p;
             ϕ_new = first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p) , n_min, n_max, rtol=tol))
             e1_new = first(quadgk(x -> x*P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i] , n_min, n_max, rtol=tol))
             e2_new = first(quadgk(x -> x*x*P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i] , n_min, n_max, rtol=tol))
-            σc_new = ((first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i]/((1-p[:k])*x^(p[:k]-2)-p[:μ]/p[:S])^2 ,
-            n_min, n_s - ϵ, rtol=tol)))/p[:S])^(-1/2)
+            σc_new = ((first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i]/((1-p[:k])*x^(p[:k]-2))^2 ,
+            n_min, n_max, rtol=tol))))^(-1/2)
             #σc_new = ((first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i]/((1-p[:k])*x^(p[:k]-2)-p[:μ]/p[:S])^2 , n_min, n_s - ϵ, rtol=tol))+
             #first(quadgk(x -> P_n(x, e1_n[i], e2_n[i], p)/ϕ_n[i]/((1-p[:k])*x^(p[:k]-2)-p[:μ]/p[:S])^2 , n_s + ϵ, n_max, rtol=tol))-
             #2*P_n(n_s, e1_n[i], e2_n[i], p)/ϵ)/p[:S])^(-1/2)
@@ -186,7 +186,7 @@ function σ_crit_gauss(p;
     Iter = 2000, #number of iteration
     rela = .01, #relax parameter for fixed point
     tol = 1e-9, #requested tolerance for numerical integrator
-    ϵ = 1e-2, #Hadamard small parametrs for partie finie
+    ϵ = 1e-4, #Hadamard small parametrs for partie finie
     σc_init = (p[:scaled] ? .1*p[:μ] : .1*p[:μ]/p[:S]), #initial guess for σ_c
     n_max = 1e3, #upper bound for integration
     n_min = p[:b0]*p[:threshold], #lower bound for integration
@@ -198,11 +198,12 @@ function σ_crit_gauss(p;
         n_s = haskey(p, :r) ? (p[:μ]/p[:S]/(1-p[:k])/p[:r])^(1/(p[:k]-2)) : (p[:μ]/p[:S]/(1-p[:k]))^(1/(p[:k]-2))
     end 
 
-    σc = σc_init*ones(Iter+1)     
+    σc = σc_init*ones(Iter+1)    
+     
     for i in 1:Iter
         p[:σ] = σc[i]
-        σc_new = ((first(quadgk(x -> pdf(P_n_gauss(p),x)/((1-p[:k])*x^(p[:k]-2)-p[:μ]/p[:S])^2 ,
-         n_min, n_s - ϵ, rtol=tol)))/p[:S])^(-1/2)
+        σc_new = ((first(quadgk(x -> pdf(last(P_n_gauss(p)),x)/((1-p[:k])*x^(p[:k]-2))^2 ,
+         n_min, n_max, rtol=tol))))^(-1/2)
 
         σc[i+1] = (1-rela)*σc[i] + rela*σc_new
     end

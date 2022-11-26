@@ -8,39 +8,39 @@ using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes, LinearAlgebra
 ### Production statistics ###
 
 P = Dict{Symbol, Any}(
-        :scaled => true,
+        :scaled => false,
         :S => 50,
-        :μ => 10 .^(range(0,stop=3,length=100)),
-        :σ => 0.,
+        :μ => 1, #10 .^(range(-2,stop=2,length=100)),
+        :σ => 1.,
         :k => 1.,
         :b0 => 1.,
         :λ => 0,
-        :K => 1,
+        :K => 10 .^(range(-2,stop=2,length=5)),
         :dist => "normal",
         #:dist_r => Normal(.001,.0),
         :r => 1,
         :z => 0,
-        :threshold => true,
+        :threshold => false,
         :N => 1,
         :symm => false,
-        :seed => 31,
+        :seed => 34,
 
 );
 
-l = length(P[:μ])
-c = .1
+l = length(P[:K])
 
 eq_distr = Matrix{Float64}(undef, P[:S], l)
 growth_r = Matrix{Float64}(undef, P[:S], l)
 carrying_cap = Matrix{Float64}(undef, P[:S], l)
 cavity_moments = Matrix{Float64}(undef, 2, l)
+richness = Vector{Float64}(undef, l)
 for (i,p) in enumerate(expand(P))
-    p[:K]=p[:μ]
-    p[:r]=p[:μ]^(-1/4)
-    p[:μ]=c*p[:K]^(-1)
+    p[:r]=437*p[:K]^(-.25)
+    p[:μ]=p[:r]/p[:K]/p[:S]
     #p[:μ]*=p[:r]/p[:S]/p[:b0]
-    #p[:σ]*=p[:μ]
+    p[:σ]*=p[:μ]
     evolve!(p)
+    richness[i] = p[:richness] 
     eq_distr[:, i] .= p[:equilibrium]
     growth_r[:, i] .= p[:r]
     carrying_cap[:, i] .= p[:K]
@@ -83,30 +83,34 @@ legends = :bottomright,
 label = false ,
 )
 
-plot!([mean(eq_distr[:,i]) for i in 1:l],[.25*mean(eq_distr[:,i])^.75 for i in 1:l],
+plot!([mean(eq_distr[:,i]) for i in 1:l],[(437/2^(2-.75))*mean(eq_distr[:,i])^.75 for i in 1:l],
 linewidth = 2,
-linestyle = :solid,
+linestyle = :dash,
 linecolor = :black,
 alpha = .5,
 legends = :bottomright,
-label = L"\langle b*\rangle^{3/4}" ,
+#label = L"\langle b*\rangle^{3/4}" ,
+label = false,
+xlims = [10^(-2.5),10^2.5],
 )   
 
 #logistic
 scatter!([[mean(eq_distr[:,i]) for i in 1:l]],
-[[mean(growth_r[:,i])*mean(eq_distr[:,i]) for i in 1:l]],
+[[mean(growth_r[:,i])*mean(eq_distr[:,i] .* (1 .- eq_distr[:,i] ./ carrying_cap[:,i])) for i in 1:l]],
 ylabel = L"\langle b* \ g(b^*)\rangle",
 xlabel = L"\langle b*\rangle",
 linewidth = 2,
 label = false,
 scale = :log,
 alpha = .5,
-#xlims = [10^(-2),10^2],
+xlims = [10^(-2.5),10^2.5],
 #yticks = [10^(-2), 10^(-1),10^(0),10,10^(2)],
 #ylims=[1e-6,1e-2]
+#markersize = .1*richness,
+grid = false,
 )
 
-#savefig("SM-production2.svg")
+savefig("SM-production-GLV.svg")
 
 
 

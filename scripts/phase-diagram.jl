@@ -15,16 +15,16 @@ using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes
 
 P = Dict{Symbol, Any}(
         :scaled => true,
-        :S => 100,
+        :S => 1000,
         :μ => .01:.01:1.2,
-        :σ => .001:.001:.06,
+        :σ => .001:.001:.12,
         :k => .75,
         :b0 => 1.,
         :λ => 0,
         :z => 0,
-        :K => 20,
+        :K => 1e10,
         :threshold => false,
-        :dist => "normal",
+        :dist => "gamma",
         #:dist_r => Uniform(.01,1),
         :N => 1,
         :symm => false,
@@ -41,12 +41,12 @@ end
 sublinear = heatmap(
 P[:μ], 
 P[:σ],
-reshape(pippazza, length(P[:μ]), length(P[:σ]))',
+reshape(pippa, length(P[:μ]), length(P[:σ]))',
 clims = (0,1),
 legend = :none,
 dpi = 500,
 alpha = 1.,
-c = palette([:white, COLOR_SUB49], 100),
+c = palette([:white, COLOR_LOG49], 100),
 grid = false,
 xlabel = L"\mu S",
 ylabel = L"\sigma \sqrt{S}",
@@ -56,7 +56,7 @@ title = L"\textrm{Stability \,\, in \,\, parameter \,\, space}"
 ν = sqrt(2*log(100))
 
 pippo = [x for x in .01:.005:1]
-plot!(pippo, ((1-P[:k])/ν)*(pippo .- pippo.^((P[:k]-3)/(P[:k]-2))),
+plot(pippo, ((1-P[:k])/ν)*(pippo .- pippo.^((P[:k]-3)/(P[:k]-2))),
 color = :green,
 linestyle = :solid,
 linewidth = 4,
@@ -64,6 +64,10 @@ alpha=1,
 ylims = [0.001,0.04],
 xlims = [.0,1]
 )
+
+open("extinction-line.txt", "w") do io
+    writedlm(io, [pippo ((1-P[:k])/ν)*(pippo .- pippo.^((P[:k]-3)/(P[:k]-2)))])
+end
 
 pippo = [x for x in .01:.005:1.2]
 plot!(pippo, ((1-P[:k])/ν)*pippo,
@@ -76,13 +80,13 @@ ylims = [0.,.12],
 )
 
 pippo = [x for x in .1:.005:.8]
-plot!(pippo, [1/20/sqrt(ν^2+1) for i in pippo],
+plot(pippo, [1/20/sqrt(ν^2+1) for i in pippo],
 color = :green,
 linestyle = :solid,
 linewidth = 4,
 alpha=1,
-#ylims = [0.,.12],
-#xlims = [.0,1]
+ylims = [0.,.12],
+xlims = [.0,1]
 )
 
 plot!(pippo, .05*pippo.^0,
@@ -97,7 +101,7 @@ alpha = .5,
 linewidth=2,
 linestyle = :dash)
 
-savefig("SM-extiction-threshold.svg")
+savefig("SM-stability-cavity+gauss.svg")
 
 pippazzaccia = readdlm("./papers/onofrio/fig/prob-stability-S_100-N_10-b₀_1.0-σ_0.001:0.001:0.12-μ_0.01:0.01:1.2-z_0.0-dist_normal-k_1.0.txt")
 pippazza = readdlm("./papers/onofrio/fig/prob-stability-zero-S_100-N_10-n₀_1-σ_0.001:0.001:0.06-μ_0.01:0.01:1.2.txt")

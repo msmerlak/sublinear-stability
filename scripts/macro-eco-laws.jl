@@ -1,3 +1,5 @@
+#= Produces the plots for the production scaling and for the macroecological laws. =#
+
 using DrWatson, Glob
 @quickactivate
 foreach(include, glob("*.jl", srcdir()))
@@ -5,8 +7,7 @@ foreach(include, glob("*.jl", srcdir()))
 using ProgressMeter, Suppressor, ThreadsX, DataFrames
 using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes, LinearAlgebra
 
-### Production statistics ###
-
+#= Production statistics =#
 P = Dict{Symbol, Any}(
         :scaled => false,
         :S => 50,
@@ -61,9 +62,9 @@ xlims = [10^(-2),10^2],
 ylims=[1e-3,1e4]
 )
 
-#open("production-sims.txt", "a") do io
-#        writedlm(io, [[mean(eq_distr[:,i]) for i in 1:l]  [mean(growth_r[:,i])*P[:b0]^(1-P[:k])*mean(eq_distr[:,i].^P[:k]) for i in 1:l]])
-#    end
+open("production-sims.txt", "a") do io
+        writedlm(io, [[mean(eq_distr[:,i]) for i in 1:l]  [mean(growth_r[:,i])*P[:b0]^(1-P[:k])*mean(eq_distr[:,i].^P[:k]) for i in 1:l]])
+    end
 
 vline!(1e-3:1e4, [P[:b0]*(P[:z]/P[:r])^(1/(P[:k]-1))],
 color = :red, 
@@ -110,10 +111,7 @@ xlims = [10^(-2.5),10^2.5],
 grid = false,
 )
 
-savefig("SM-production-GLV.svg")
-
-### Species abundance distributions ###
-
+#= Species abundance distributions =#
 μᵣ = log(7.3)
 σᵣ = .38
 
@@ -165,8 +163,6 @@ linewidth = 2,
 linecolor = :black,
 grid = false,
 )
-
-#savefig("SM-abundance-realistic-mammal.svg")
 
 histogram([P[:equilibrium]],
 normalize=true,
@@ -230,11 +226,7 @@ ylabel = L"P(x)",
 xticks = [10^(-3), 10^(-2), 10^(-1),10^(0), 10, 10^(2), 10^(3)],
 )
 
-
-savefig("SM-species-abd-growth-rate.svg")
-
-### Taylor's law ###
-
+#= Taylor's law =#
 P = Dict{Symbol, Any}(
         :scaled => false,
         :S => 50,
@@ -267,8 +259,6 @@ for (i,p) in enumerate(expand(P))
     cavity[2,i] = P_n_gauss(p)[2]-P_n_gauss(p)[1]^2
 end
 
-#histogram(eq_distr, normalize = true)
-
 scatter([mean(eq_distr[:,i]) for i in 1:l], [var(eq_distr[:,i]) for i in 1:l],
 scale = :log,
 alpha = .5,
@@ -297,8 +287,6 @@ label = L"(\langle b\rangle^*)^{2}",
 #xlims = [10^(-2),10^2],
 legends = :topleft)
 
-
-
 open("taylor-sims.txt", "a") do io
         writedlm(io, [[mean(eq_distr[:,i]) for i in 1:l]  [var(eq_distr[:,i]) for i in 1:l]])
     end
@@ -314,11 +302,7 @@ label = L"(\langle b\rangle^*)^2",
 #ylims=[1e-2,1e-2],
 legends = :topleft)
 
-
-#savefig("SM-taylor-realistic2.svg")
-
-### Size-density scaling ###
-
+#= Size-density scaling =#
 P = Dict{Symbol, Any}(
         :scaled => false,
         :S => 50,
@@ -387,5 +371,3 @@ linecolor = :black,
 legends = :bottomright,
 #label = L"\langle n_i^*\rangle^\alpha" ,
 )
-
-savefig("SM-size-density-scaling2.svg")

@@ -1,3 +1,5 @@
+#= Dynamics and auxiliary functions are defined =#
+
 using DifferentialEquations
 using Random, Distributions
 using LinearAlgebra

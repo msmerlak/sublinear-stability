@@ -1,5 +1,4 @@
-### Plots the spectrum of the community matrix 
-### and countour lines
+#= Plots of the spectrum of the community matrix and countour lines are defined. =#
 
 function spectrum(p)
     @assert p[:converged]

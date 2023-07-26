@@ -1,4 +1,4 @@
-#= Defines of useful functions and constants =#
+#= Useful functions and constants are defined. =#
 
 ppart(x) = max(x, 0)
 

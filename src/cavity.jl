@@ -1,3 +1,5 @@
+#= Functions relative to the cavity method are defined. =#
+
 using StatsBase
 using Random, Distributions, Statistics
 using DifferentialEquations

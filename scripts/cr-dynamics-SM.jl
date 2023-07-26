@@ -1,4 +1,4 @@
-#= Dynamics for the consumer-resource resource framework described in the SM. It is set to reproduce the results for predator-prey.
+#= Dynamics for the consumer-resource resource framework described in the SM is defined. It is set to reproduce the results for predator-prey.
     Uncomment the relative dynamics and change parameters if necessary in order to reproduce results for consumer-resource. =#
 
 using DrWatson, Glob

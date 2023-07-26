@@ -7,7 +7,7 @@ using HCubature
 using NLsolve
 using SpecialFunctions
 
-# Expression for abundance distribution in sublinear case
+# Expression for density distribution in sublinear case
 function P_n(n, e1_n, e2_n, p)
     @unpack μ, σ, k, S = p
     if !p[:scaled] μ = μ*S end
@@ -26,7 +26,7 @@ function P_n(n, e1_n, e2_n, p)
     end
 end
 
-# Expression for abundance with gaussian approximation
+# Expression for density distribution with gaussian approximation
 function P_n_gauss(p)
     @unpack μ, σ, k, S, b0 = p
     μ = !p[:scaled] ? μ*S : μ

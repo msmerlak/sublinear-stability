@@ -1,19 +1,11 @@
-using Pkg
-Pkg.add("DrWatson")
+###
 
-Pkg.instantiate()
-
-using DrWatson
+using DrWatson, Glob
 @quickactivate
-
-using Glob
 foreach(include, glob("*.jl", srcdir()))
-
 
 using ProgressMeter, Suppressor, ThreadsX
 using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes
-
-
 
 # sublinear
 

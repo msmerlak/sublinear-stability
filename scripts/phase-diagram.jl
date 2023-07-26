@@ -1,52 +1,47 @@
-using Pkg
-Pkg.add("DrWatson")
+#= SCRIPT DESCRIPTION =#
 
-Pkg.instantiate()
-
-using DrWatson
+using DrWatson, Glob
 @quickactivate
-
-using Glob
 foreach(include, glob("*.jl", srcdir()))
-
 
 using ProgressMeter, Suppressor, ThreadsX
 using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes
 
 P = Dict{Symbol, Any}(
         :scaled => true,
-        :S => 1000,
-        :μ => .01:.01:1.2,
-        :σ => .001:.001:.12,
+        :S => 100,
+        :μ => .2:.2:10.,
+        :σ => .1:.1:5.,
         :k => .75,
         :b0 => 1.,
         :λ => 0,
-        :z => 0,
-        :K => 1e10,
+        :z => 1.,
+        :K => 2,
         :threshold => false,
-        :dist => "gamma",
+        :dist => "normal",
         #:dist_r => Uniform(.01,1),
-        :N => 1,
+        :N => 5,
         :symm => false,
     );
 
-# full coexistence
-
+# full stable coexistence
 ϕ = ThreadsX.collect(full_coexistence(p) for p in expand(P));
+
 a = reshape(ϕ, length(P[:μ]), length(P[:σ]))
-open("../papers/onofrio/fig/prob-stability-S_$(P[:S])-N_$(P[:N])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ]).txt", "w") do io
+
+open("robustness-carrying-c-fixed-S_$(P[:S])-N_$(P[:N])-σ_$(P[:σ])-μ_$(P[:μ])-K_$(P[:K]).txt", "w") do io
     writedlm(io, a)
 end
 
 sublinear = heatmap(
 P[:μ], 
 P[:σ],
-reshape(pippa, length(P[:μ]), length(P[:σ]))',
+a',
 clims = (0,1),
 legend = :none,
 dpi = 500,
 alpha = 1.,
-c = palette([:white, COLOR_LOG49], 100),
+c = palette([:white, COLOR_SUB49], 100),
 grid = false,
 xlabel = L"\mu S",
 ylabel = L"\sigma \sqrt{S}",
@@ -249,39 +244,3 @@ sublinear = heatmap(
 # unscaled = plot(logistic..., sublinear..., 
 #     dpi = 500, size = (1000, 500)
 #     )
-
-
-
-# ### symmetric
-
-
-# P = Dict{Symbol, Any}(
-#     :scaled => true,
-#     :S => 200,
-#     :μ => .01:.2:9,
-#     :σ => 0.01:.05:.6,
-#     :k => .75,
-#     :n0 => 1e-5,
-#     :λ => 0.,
-#     :K => 1e6,
-#     :dist => "normal",
-#     #:dist_r => Uniform(1,2),
-#     :N => 50,
-#     :symm => true
-# );
-
-# ϕ = ThreadsX.collect(diversity(p) for p in expand(P));
-# sublinear_symmetric = heatmap(
-# P[:μ], 
-# P[:σ],
-# reshape(ϕ, length(P[:μ]), length(P[:σ]))',
-# clims = (0,1),
-# legend = :none,
-# dpi = 500,
-# xlabel = L"\mu = N\,\textrm{mean}(A_{ij})",
-# ylabel = L"\sigma = \sqrt{N}\,\textrm{sd}(A_{ij})",
-# title = "equilibrium diversity"
-# )
-
-# =#
-

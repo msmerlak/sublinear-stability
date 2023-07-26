@@ -112,8 +112,6 @@ grid = false,
 
 savefig("SM-production-GLV.svg")
 
-
-
 ### Species abundance distributions ###
 
 μᵣ = log(7.3)
@@ -391,57 +389,3 @@ legends = :bottomright,
 )
 
 savefig("SM-size-density-scaling2.svg")
-
-### Size spectrum ###
-
-foreach(include, glob("*.jl", srcdir()))
-
-P = Dict{Symbol, Any}(
-        :scaled => true,
-        :S => 50,
-        :μ => 1,
-        :σ => .69,
-        :k => .75,
-        :n0 => 1e-10,
-        :λ => 0,
-        :K => 1e10,
-        :dist => "normal",
-        #:dist_r => Uniform(.001,.1),
-        :N => 1,
-        :symm => false,
-        :seed => 1,
-        :r => 10 .^(range(-2,stop=0,length=500)),
-);
-
-evolve!(P, trajectory=true)
-
-plot(P[:trajectory],
-ylabel = "nᵢ(t)",
-linewidth = 2,
-legend = false,
-)
-
-scatter(P[:r].^(-4), P[:equilibrium]./P[:r].^(-4),
-#ylims=[.01,10000],
-#xlims=[1e-12,1e-8],
-scale=:log,
-label = false,
-grid = false,
-xlabel = L"\langle m \rangle",
-ylabel = "Abundance",
-title = "Size spectrum",
-)
-plot!(P[:r].^(-4), 1*P[:r].^(8),
-linewidth=2,
-linecolor = :black,
-label = L"\langle m \rangle^{-2}",
-legend = :topright,
-)
-
-cumul=cumsum(P[:equilibrium]./P[:r].^(-4))
-plot!(P[:r].^(-4), cumul, 
-linewidth=2,
-scale = :log
-)
-
-histogram( log.(P[:equilibrium]))

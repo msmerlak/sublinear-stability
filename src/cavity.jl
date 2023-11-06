@@ -17,7 +17,7 @@ function P_n(n, e1_n, e2_n, p)
     if !haskey(p, :dist_r) # unique r
         r = haskey(p, :r) ? first(p[:r]) : 1
         return (1-k)*n^(k-2)/(sqrt(2*π*σ^2*e2_n/r^2))*
-        exp(-(n^(k-1)-μ*e1_n/r)^2/(2*σ^2*e2_n/r^2))
+        exp(-(n^(k-1)-p[:z]/r-μ*e1_n/r)^2/(2*σ^2*e2_n/r^2))
     else # uniformely distributed r
         a, b = p[:dist_r].a, p[:dist_r].b
         return (1-k)*n^(k-2)/(sqrt(2*π*e2_n*σ^2)*(b-a)*2*n^(2*k-2))*

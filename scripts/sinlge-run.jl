@@ -2,18 +2,19 @@
 
 using DrWatson, Glob
 @quickactivate
-foreach(include, glob("*.jl", srcdir()))
+foreach(includet, glob("*.jl", srcdir()))
 
 using ProgressMeter, Suppressor, DataFrames
 using Plots, LaTeXStrings
 
 #= Define the system =#
-P = Dict{Symbol, Any}(
-    :scaled => true,
+
+(P = Dict{Symbol, Any}(
+    :scaled => false,
     :S => 10,
-    :μ => 1.,
+    :μ => .1,
     :C => 1.,
-    :σ => .05,
+    :σ => .01,
     :k => .75,
     :b0 => 1.,
     :K => 1e5,
@@ -22,7 +23,7 @@ P = Dict{Symbol, Any}(
     :r => 1, 
     :N => 1,
     :threshold => false,
-    :dist => "gamma",
+    :dist => "normal",
     :symm => false,
     :seed => 17,
 );
@@ -37,12 +38,11 @@ xlabel = L"t",
 #yscale = :log,
 linewidth = 3,
 legend = false,
-alpha = 1,
+alpha = .5,
 grid = false,
 palette = :YlOrBr_9,
-)
-
-P[:richness]
+c=9
+))
 
 #= Density distribution =#
 histogram([(P[:equilibrium])],
@@ -55,6 +55,16 @@ label = false,
 grid = false,
 )
 
+#= cavity solution =#
+ϕ, e1, e2 = Cavity(P, n_max=100)
+X=[n for n in .95*minimum(P[:equilibrium]):.0001:1.05*maximum(P[:equilibrium])]
+plot!(X,[P_n(n,e1,e2,P) for n in X],
+labels="cavity",
+alpha = 1,
+linewidth = 2,
+linecolor = :black,
+)
+
 #= cavity solution with gaussian approximation =#
 X=[n for n in .5*minimum(P[:equilibrium]):.0001:1.5*maximum(P[:equilibrium])]
 plot!(X,[pdf(last(P_n_gauss(P)) ,n) for n in X],
@@ -63,16 +73,6 @@ linewidth = 2,
 alpha = 1,
 linecolor = :black,
 linestyle = :dash
-)
-
-#= cavity solution =#
-ϕ, e1, e2 = Cavity(P, n_max=1000)
-X=[n for n in .5*minimum(P[:equilibrium]):.0001:1.5*maximum(P[:equilibrium])]
-plot!(X,[P_n(n,e1,e2,P) for n in X],
-labels="cavity",
-alpha = 1,
-linewidth = 2,
-linecolor = :black,
 )
 
 #= cavity solution with mixed gaussian approximation =#

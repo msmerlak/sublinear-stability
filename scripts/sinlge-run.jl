@@ -75,14 +75,5 @@ linecolor = :black,
 linestyle = :dash
 )
 
-#= cavity solution with mixed gaussian approximation =#
-plot!(X,[P_n_mix(n, P) for n in X],
-labels = "cavity - mixed",
-linewidth = 2,
-alpha = 1,
-linecolor = :black,
-linestyle = :dashdot,
-)
-
 #= eigenvalues spectrum =#
 boundary(P)

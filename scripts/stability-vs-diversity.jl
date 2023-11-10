@@ -1,22 +1,13 @@
-using Pkg
-Pkg.add("DrWatson")
+#= Produces the plot of stability vs diversity (S) for fixed μ and σ. =#
 
-Pkg.instantiate()
-
-using DrWatson
+using DrWatson, Glob
 @quickactivate
-
-using Glob
 foreach(include, glob("*.jl", srcdir()))
-
 
 using ProgressMeter, Suppressor, ThreadsX
 using Plots, LaTeXStrings, DelimitedFiles, Colors, ColorSchemes
 
-
-
-# sublinear
-
+#= Sublinear =#
 P = Dict{Symbol, Any}(
         :scaled => false,
         :S => 2:2:100,
@@ -34,14 +25,11 @@ P = Dict{Symbol, Any}(
 
 ϕ = ThreadsX.collect(full_coexistence(p) for p in expand(P));
 
-open("../papers/onofrio/fig/SUB-stab-vs-div-N_$(P[:N])-S_$(P[:S])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])-k_$(P[:k])-K_$(P[:K]).txt", "w") do io
+open("SUB-stab-vs-div-N_$(P[:N])-S_$(P[:S])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])-k_$(P[:k])-K_$(P[:K]).txt", "w") do io
     writedlm(io, [P[:S] ϕ], ',')
 end 
 
-
-
-# logistic
-
+#= Logistic =#
 P = Dict{Symbol, Any}(
         :scaled => false,
         :S => 2:2:100,
@@ -59,14 +47,14 @@ P = Dict{Symbol, Any}(
 
 ϕ = ThreadsX.collect(full_coexistence(p) for p in expand(P));
 
-open("../papers/onofrio/fig/LOG-stab-vs-div-N_$(P[:N])-S_$(P[:S])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])-k_$(P[:k])-K_$(P[:K]).txt", "w") do io
+open("LOG-stab-vs-div-N_$(P[:N])-S_$(P[:S])-n₀_$(P[:n0])-σ_$(P[:σ])-μ_$(P[:μ])-k_$(P[:k])-K_$(P[:K]).txt", "w") do io
     writedlm(io, [P[:S] ϕ], ',')
 end
 
-
+#= Plot =#
 #=
-a = readdlm("papers/onofrio/fig/stab-vs-div-N_100-R_100-S_2:2:100-n₀_1.0e-8-σ_0.005-μ_0.01-k_0.75-K_1.0e6.txt", ',')
-b = readdlm("papers/onofrio/fig/stab-vs-div-N_100-R_100-S_2:2:100-n₀_1.0e-8-σ_0.005-μ_0.01-k_1.0-K_20.txt", ',')
+a = readdlm("SUB ... .txt", ',')
+b = readdlm("LOG ... .txt", ',')
 
 plot(P[:S], b[:,1], 
 ribbon=b[:,2],

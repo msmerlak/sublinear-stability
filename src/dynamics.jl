@@ -1,3 +1,5 @@
+#= Dynamics and auxiliary functions are defined =#
+
 using DifferentialEquations
 using Random, Distributions
 using LinearAlgebra
@@ -18,18 +20,24 @@ function J!(j, x, p)
     j = - x.*p[:a]
     j[diagind(j)] .= p[:r]*p[:b0]^(1-p[:k]).*(dproduction.(x, Ref(p)) .- 2*x ./p[:K]) .-p[:z] .- p[:a]*x
 
-
     # above_threshold = x .> p[:b0]
     # j[diagind(j)[above_threshold]] .+= p[:k].*p[:r][above_threshold].*x[above_threshold].^(p[:k]-1)
 end
 
+function J(x, p)
+    j = - x.*p[:a]
+    j[diagind(j)] .= p[:r]*p[:b0]^(1-p[:k]).*(dproduction.(x, Ref(p)) .- 2*x ./p[:K]) .-p[:z] .- p[:a]*x
+    return j
+end
 
 ## solving
 
-MAX_TIME = 1e4
-MAX_ABUNDANCE = 1e5
+MAX_TIME = 1e3
+MAX_ABUNDANCE = 1e3
+TOL = 1e-3
 
-blowup() = DiscreteCallback((u, t, integrator) -> maximum(u) > MAX_ABUNDANCE, terminate!)
+converged(ϵ = TOL) = TerminateSteadyState(ϵ)
+blowup(max_abundance = MAX_ABUNDANCE) = DiscreteCallback((u, t, integrator) -> maximum(u) > max_abundance, terminate!)
 
 function evolve!(p; trajectory = false)
 
@@ -43,17 +51,18 @@ function evolve!(p; trajectory = false)
             (f, x, p, t) -> F!(f, x, p); #in-place F faster
             jac = (j, x, p, t) -> J!(j, x, p) #specify jacobian speeds things up
             ),
-            fill(.1, p[:S]), #initial condition
+            p[:x0], #initial condition
             (0., MAX_TIME),
             p
         )
 
     sol = solve(pb, 
-        callback = CallbackSet(TerminateSteadyState(1e-3), blowup()), 
+        callback = CallbackSet(converged(), blowup()), 
         save_on = trajectory #don't save whole trajectory, only endpoint
         )
-    p[:equilibrium] = sol.retcode == :Terminated ? sol.u[end] : NaN
-    p[:converged] = (sol.retcode == :Terminated && maximum(p[:equilibrium]) < MAX_ABUNDANCE)
+    
+    p[:equilibrium] = sol.retcode == SciMLBase.ReturnCode.Terminated ? sol.u[end] : NaN
+    p[:converged] = (sol.retcode == SciMLBase.ReturnCode.Terminated && maximum(p[:equilibrium]) < MAX_ABUNDANCE)
     p[:richness] = sum(sol.u[end] .> p[:b0]*p[:threshold])
     p[:diversity] = p[:richness] == 0 ? 0 : Ω(sol.u[end].*(sol.u[end] .> p[:b0]*p[:threshold]))
 
@@ -64,13 +73,14 @@ function evolve!(p; trajectory = false)
 end
 
 function add_initial_condition!(p)
-    p[:x0] = rand(p[:rng], Uniform(2, 10), p[:S])
+   p[:x0] = rand(p[:rng], Uniform(2, 10), p[:S])
 end
 
 function equilibria!(p)
     if !haskey(p, :rng) p[:rng] = MersenneTwister(p[:seed]) end
     if !haskey(p, :a) add_interactions!(p) end
     if !haskey(p, :r) add_growth_rates!(p) end
+    
 
     equilibria = Vector{Float64}[]
     sizehint!(equilibria, p[:N])
@@ -105,6 +115,7 @@ function add_interactions!(p)
     # add a random interaction matrix to p, the dict of parameters
     (m, s) = p[:scaled] ? (p[:μ]/p[:S], p[:σ]/sqrt(p[:S])) : (p[:μ], p[:σ])
 
+    #choose the distribution
     if p[:dist] == "normal"
         dist = Normal(m, s)
     elseif p[:dist] == "uniform"
@@ -113,10 +124,21 @@ function add_interactions!(p)
         dist = Gamma(m^2/s^2, s^2/m)
     end
 
+    #fill the interaction matrix
     a = rand(p[:rng], dist, (p[:S], p[:S]))
-    a[diagind(a)] .= 0. #self-regulation is not part of interaction matrix
 
+    #implement connectance
+    if haskey(p, :C) && p[:C] != 1
+        c = rand(Binomial(1, p[:C]), (p[:S], p[:S]))
+        println(c)
+        a = a .* c
+        println(a)
+    end
 
+    #self-interactions are implemented above
+    a[diagind(a)] .= 0. 
+
+    #implement eventual symmetry
     if p[:symm] 
         for i in 1:p[:S], j in 1:p[:S]
             if i > j
@@ -124,6 +146,7 @@ function add_interactions!(p)
             end
         end
     end
+
     p[:a] = a
 end
 
@@ -189,7 +212,7 @@ function full_coexistence(p)
         add_growth_rates!(p)
         add_initial_condition!(p)
         evolve!(p)
-        full_coexistence[i] = p[:converged] && p[:richness]==p[:S] ? 1 : 0
+        full_coexistence[i] = p[:converged] && p[:richness] == p[:S] ? 1 : 0
     end
 
     return mean(full_coexistence)

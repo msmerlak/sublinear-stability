@@ -1,5 +1,6 @@
-ppart(x) = max(x, 0)
+#= Useful functions and constants are defined. =#
 
+ppart(x) = max(x, 0)
 
 function offdiag(A::AbstractMatrix)
     [A[ι] for ι in CartesianIndices(A) if ι[1] ≠ ι[2]]
@@ -52,3 +53,15 @@ function uniquetol(A; kws...)
     end
     return S
 end
+
+COLOR_LOG = :turquoise3
+COLOR_SUB = :darkgoldenrod1
+
+COLOR_LOG49 = "#009af9"
+COLOR_SUB49 = "#fb8d00"
+
+COLOR_LOG35 = "#0070b2"
+COLOR_SUB35 = "#b26300" 
+
+K = 100.
+CUTOFF = 1.

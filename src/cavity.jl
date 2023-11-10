@@ -1,3 +1,5 @@
+#= Functions relative to the cavity method are defined. =#
+
 using StatsBase
 using Random, Distributions, Statistics
 using DifferentialEquations
@@ -7,7 +9,7 @@ using HCubature
 using NLsolve
 using SpecialFunctions
 
-# Expression for abundance distribution in sublinear case
+# Expression for density distribution in sublinear case
 function P_n(n, e1_n, e2_n, p)
     @unpack μ, σ, k, S = p
     if !p[:scaled] μ = μ*S end
@@ -15,7 +17,7 @@ function P_n(n, e1_n, e2_n, p)
     if !haskey(p, :dist_r) # unique r
         r = haskey(p, :r) ? first(p[:r]) : 1
         return (1-k)*n^(k-2)/(sqrt(2*π*σ^2*e2_n/r^2))*
-        exp(-(n^(k-1)-μ*e1_n/r)^2/(2*σ^2*e2_n/r^2))
+        exp(-(n^(k-1)-p[:z]/r-μ*e1_n/r)^2/(2*σ^2*e2_n/r^2))
     else # uniformely distributed r
         a, b = p[:dist_r].a, p[:dist_r].b
         return (1-k)*n^(k-2)/(sqrt(2*π*e2_n*σ^2)*(b-a)*2*n^(2*k-2))*
@@ -26,7 +28,7 @@ function P_n(n, e1_n, e2_n, p)
     end
 end
 
-# Expression for abundance with gaussian approximation
+# Expression for density distribution with gaussian approximation
 function P_n_gauss(p)
     @unpack μ, σ, k, S, b0 = p
     μ = !p[:scaled] ? μ*S : μ
